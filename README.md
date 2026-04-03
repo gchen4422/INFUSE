@@ -1,5 +1,7 @@
 # INFUSE
 
+![INFUSE logo](INFUSE.jpg)
+
 INtegrating Functional annotations into mUlti-ancestry fine-mapping via Sum of single Effect model *Preliminary R package.*
 
 ## Installation
