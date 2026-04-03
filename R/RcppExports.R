@@ -33,7 +33,3 @@ optimize_llk <- function(annotation, alpha, initial_w) {
     .Call(`_INFUSE_optimize_llk`, annotation, alpha, initial_w)
 }
 
-rcpp_hello_world <- function() {
-    .Call(`_INFUSE_rcpp_hello_world`)
-}
-
