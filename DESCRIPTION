@@ -1,13 +1,29 @@
-Encoding: UTF-8
 Package: INFUSE
 Type: Package
-Title: Concise Summary of What the Package Does
-Version: 0.0.1
-Date: 2025-09-30
-Authors@R: person("Your", "Name", role = c("aut", "cre"), email =
-        "your@email.com")
-Description: More about what it does (maybe more than one line).
+Title: Integrating Functional Annotations into Multi-Ancestry Fine-Mapping
+Version: 0.0.1.9000
+Authors@R: 
+    person(
+      given = "Guangxin",
+      family = "Chen",
+      role = c("aut", "cre"),
+      email = "chen4422@purdue.edu"
+    )
+Description: Provides tools for multi-ancestry fine-mapping using a sum of
+    single effects framework, with optional integration of functional
+    annotations to improve prior specification and variant prioritization.
 License: GPL (>= 2)
-Imports: Rcpp (>= 1.1.0)
-LinkingTo: Rcpp, RcppArmadillo
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
+Imports:
+    Rcpp (>= 1.1.0),
+    R6,
+    progress,
+    nloptr,
+    elasticnet,
+    glmnet
+LinkingTo:
+    Rcpp,
+    RcppArmadillo
+NeedsCompilation: yes
