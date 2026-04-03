@@ -47,8 +47,12 @@ infuse_core<-function(R_mat_list,summary_stat_list,L,residual_variance=NULL,prio
   meSuSieObject_obj<-meSuSieObject$new(n_snp,L,n_ancestry,residual_variance,used_weights,optim_method,estimate_residual_variance,max_iter)
   
   cat("# Start data analysis \n")
-  pb = progress_bar$new(format =paste(" :elapsed"),clear = TRUE,total = max_iter,show_after = 0)
-  
+  pb = progress::progress_bar$new(
+    format = " :elapsed",
+    clear = TRUE,
+    total = max_iter,
+    show_after = 0
+  )  
   n_iter = 0
   for (iter in 1:max_iter) {
     comp_residual<-meSuSieObject_obj$compute_residual(meSuSieData_obj,meSuSieObject_obj)
