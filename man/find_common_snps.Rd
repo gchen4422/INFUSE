@@ -7,18 +7,18 @@
 find_common_snps(sumstat, ref)
 }
 \arguments{
-\item{sumstat}{A data frame containing the summary statistics data with at least 
+\item{sumstat}{A data frame containing the summary statistics data with at least
 the columns "CHR_POS", "REF", and "ALT".}
 
-\item{ref}{A data frame serving as the reference, with at least the columns 
+\item{ref}{A data frame serving as the reference, with at least the columns
 "CHR_POS", "REF", and "ALT".}
 }
 \value{
-A vector of "CHR_POS" values corresponding to the SNPs common between 
-`sumstat` and `ref` with matching allele information.
+A vector of "CHR_POS" values corresponding to the SNPs common between
+\code{sumstat} and \code{ref} with matching allele information.
 }
 \description{
-This function identifies common SNPs (based on "CHR_POS") between a summary statistics 
-dataset (`sumstat`) and a reference dataset (`ref`). It then ensures that the 
+This function identifies common SNPs (based on "CHR_POS") between a summary statistics
+dataset (\code{sumstat}) and a reference dataset (\code{ref}). It then ensures that the
 alleles match between the two datasets, either in the original or flipped orientation.
 }
