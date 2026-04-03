@@ -3,14 +3,18 @@ require(R6)
 require(nloptr)
 require(elasticnet)
 
-#' meSuSie core function
+
+
+#' INFUSE core function
 #'
 #' @param  R_mat_list A list of length N ancestry with each elment being correlation matrix with dimension p*p, the column name of the correlation matrix should match to the order of SNP name in summary_stat_list
 #' @param  summary_stat_list A list of length N ancestry with each elment being summary statistics. The minimum requirement of summary statistics contains columns of SNP, Beta, Se, Z, and N. The order of the SNP should match the order of the correlation matrix 
 #' @param  L Number of effects supposed within the region
 #' @return An R6 object with pip, credible sets, and other features of the fine-mapping result. 
 #' @export
-mafpc_core<-function(R_mat_list,summary_stat_list,L,residual_variance=NULL,prior_weights=NULL,ancestry_weight=NULL,optim_method ="optim",estimate_residual_variance =F,max_iter =100,cor_method ="min.abs.corr",cor_threshold=0.5,annot = NULL, annot_method = NULL,est_annot_prior = "fixed"){
+
+
+infuse_core<-function(R_mat_list,summary_stat_list,L,residual_variance=NULL,prior_weights=NULL,ancestry_weight=NULL,optim_method ="optim",estimate_residual_variance =F,max_iter =100,cor_method ="min.abs.corr",cor_threshold=0.5,annot = NULL, annot_method = NULL,est_annot_prior = "fixed"){
   
   cat("*************************************************************\n
   Multiple Ancestry Sum of Single Effect Model (MESuSiE)          \n
@@ -41,34 +45,21 @@ mafpc_core<-function(R_mat_list,summary_stat_list,L,residual_variance=NULL,prior
   
   cat("# Create MESuSiE object \n")
   meSuSieObject_obj<-meSuSieObject$new(n_snp,L,n_ancestry,residual_variance,used_weights,optim_method,estimate_residual_variance,max_iter)
-  # meSuSieObject_obj<-meSuSieObject$new(p,L,n_ancestry,residual_variance,prior_weights,optim_method,estimate_residual_variance,max_iter)
   
   cat("# Start data analysis \n")
   pb = progress_bar$new(format =paste(" :elapsed"),clear = TRUE,total = max_iter,show_after = 0)
-  #  pb = progress_bar$new(format = paste("(Iteration = :iteration) :elapsed"),clear = TRUE,total = max_iter,show_after = 0)
   
   n_iter = 0
   for (iter in 1:max_iter) {
-    
     comp_residual<-meSuSieObject_obj$compute_residual(meSuSieData_obj,meSuSieObject_obj)
     
-    
     for (l_index in seq(1,L,1)) {
-      
       comp_residual = comp_residual + meSuSieObject_obj$Xr[[l_index]]
-      
       SER_res<-single_effect_regression(comp_residual,meSuSieData_obj$XtX.diag, meSuSieObject_obj,l_index) 
-      
       meSuSieObject_obj$par_update(SER_res,l_index)
-      
-      
       meSuSieObject_obj$compute_KL(SER_res,meSuSieObject_obj$compute_SER_posterior_loglik(meSuSieData_obj,comp_residual,SER_res$b1b2),l_index)
-      
       meSuSieObject_obj$compute_Xr(meSuSieData_obj,SER_res$b1b2$EB1,l_index)
-      
       comp_residual = comp_residual - meSuSieObject_obj$Xr[[l_index]]
-      
-      
     }
     
     pb$tick(tokens = list(iteration = iter))
@@ -80,201 +71,170 @@ mafpc_core<-function(R_mat_list,summary_stat_list,L,residual_variance=NULL,prior
     if(meSuSieObject_obj$estimate_residual_variance==TRUE){
       meSuSieObject_obj$sigma2 =  updated_sigma2
     }
-    # print(meSuSieObject_obj$sigma2)
     n_iter = n_iter + 1
-    #check convergence and update sigma2
   }
-  
-  
-  
   
   prior_ELBO <- meSuSieObject_obj$ELBO[iter]
   meSuSieObject_obj$ELBO<-rep(NA,max_iter)
   meSuSieObject_obj$ELBO[1] = prior_ELBO
   
-  if (annot_method == "mlk"){
-    # Compute standard deviations for each column
-    sds <- apply(as.matrix(annot), 2, sd)
-    annotation_nonconst <- as.matrix(annot)[, sds > 0]
-    annotation_nonconst_scaled <- scale(annotation_nonconst)
-    scaling_scales <- attr(annotation_nonconst_scaled, "scaled:scale")
+  # =====================================================================
+  # MASTER ANNOTATION WRAPPER
+  # Safely bypasses all annotation logic if no annotations are provided
+  # =====================================================================
+  if (!is.null(annot) && !is.null(annot_method)) {
     
-    # Define grid parameters for k and nonzero loadings per component
-    k_values <- c(5,10,15,20)       # Number of components
-    nonzero_values <- c(5,10) # Number of nonzero loadings per component
-    
-    results_comb <- expand.grid(k = k_values, q = nonzero_values)
-    
-    # Initialize an empty list to store loadings
-    loadings_list <- list()
-    
-    X <- as.matrix(annotation_nonconst_scaled)
-    storage.mode(X) <- "double"
-    G <- crossprod(X) / (nrow(X) - 1)
-  
-  
-    for (i in 1:nrow(results_comb)) {
-      k_val <- results_comb$k[i]
-      q_val <- results_comb$q[i]
-      
-      # Run spca for the current combination
-      spca_result <- spca(G, 
-                          K = k_val, 
-                          type = "Gram", 
-                          sparse = "varnum", 
-                          para = rep(q_val, k_val))
-      
-      # Save the loadings with a name that indicates the combination used
-      loadings_list[[paste0("k", k_val, "_q", q_val)]] <- spca_result$loadings
-      
-      cat("Finished combination: k =", k_val, "and q =", q_val, "\n")
-      
-    }
-    
-    results_comb$BIC <- NA
-    weights_mat = matrix(NA,nrow = nrow(spca_result$loadings) ,ncol = nrow(results_comb))
-    rownames(weights_mat) = colnames(annotation_nonconst_scaled)
-    
-  
-  
-  }
-  updated_prior_list<-list()
-  for (l_index in seq(1,L,1)) {
-    
-    input.response<-rowSums(meSuSieObject_obj$alpha[[l_index]])
-    
-    if(max(diag(meSuSieObject_obj$V[[l_index]]))<1e-9|max(input.response)>0.999){
-      updated_prior <- rep(1/nrow(annot),nrow(annot))
-    }else{
-      if(annot_method == "glmnet"){
-        response.matrix<-matrix(c(1-input.response, input.response),length(input.response),2)
-        try.index<-try(cv.logistic<-cv.glmnet(x=as.matrix(annot),y=response.matrix, family='multinomial',alpha=0.5,type.measure = 'deviance'))
-        if(class(try.index)[1]!='try-error'){
-          #  cv.logistic<-cv.glmnet(x=as.matrix(annot),y=response.matrix, family='multinomial',alpha=0.5,type.measure = 'deviance')
-          cv.index<-which(cv.logistic$lambda==cv.logistic$lambda.min)
-          glm.beta<-as.matrix(c(cv.logistic$glmnet.fit$a0[cv.index],cv.logistic$glmnet.fit$beta[[2]][,cv.index]))
-          updated_prior<-exp(as.matrix(cbind(1,annot))%*%glm.beta)/sum(exp(as.matrix(cbind(1,annot))%*%glm.beta))
-        }else{
-          updated_prior <- rep(1/nrow(annot),nrow(annot))
+    if (annot_method == "mlk"){
+      # AUTO-SPCA BYPASS: Only run SPCA if there are 15 or more columns
+      if(ncol(as.matrix(annot)) >= 15) {
+        sds <- apply(as.matrix(annot), 2, sd)
+        annotation_nonconst <- as.matrix(annot)[, sds > 0]
+        annotation_nonconst_scaled <- scale(annotation_nonconst)
+        scaling_scales <- attr(annotation_nonconst_scaled, "scaled:scale")
+        
+        k_values <- c(5,10,15,20)       
+        nonzero_values <- c(5,10) 
+        results_comb <- expand.grid(k = k_values, q = nonzero_values)
+        loadings_list <- list()
+        
+        X <- as.matrix(annotation_nonconst_scaled)
+        storage.mode(X) <- "double"
+        G <- crossprod(X) / (nrow(X) - 1)
+        
+        for (i in 1:nrow(results_comb)) {
+          k_val <- results_comb$k[i]
+          q_val <- results_comb$q[i]
+          spca_result <- spca(G, K = k_val, type = "Gram", sparse = "varnum", para = rep(q_val, k_val))
+          loadings_list[[paste0("k", k_val, "_q", q_val)]] <- spca_result$loadings
+          cat("Finished combination: k =", k_val, "and q =", q_val, "\n")
         }
-      }else if (annot_method == "mlk"){
-        
-        # if (l_index == 1){
-        #   annotation = as.matrix(annot)
-        #   alpha = meSuSieObject_obj$alpha[[l_index]]
-        #   #save(annotation,alpha, file = paste0("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/MESuSiE_inf_all_by_all/combined/formatted/formatted_sumstats/test_pca_input/test_cs_input_pca",l_index,".Rdata"))
-        #   save(annotation,alpha, file = paste0("./test_cs_input_pca",l_index,".Rdata"))
-        # }
-        
-        for(i in 1:nrow(results_comb)) {
-          
-          k <- results_comb$k[i]
-          nonzero <- results_comb$q[i]
-          
-          current_loadings <- loadings_list[[paste0("k", k, "_q", nonzero)]]
-          
-          # Compute the scores and reconstruct the data.
-          annotation_spca <- annotation_nonconst_scaled %*% current_loadings
-          
-          # Next, compute beta estimates
-          inter_weight <- optimize_llk(as.matrix(annotation_spca), meSuSieObject_obj$alpha[[l_index]], rep(0, ncol(annotation_spca)))
-          gamma <- inter_weight 
-          V_k <- current_loadings
-          beta_std <- V_k %*% gamma
-          beta_orig <- beta_std / scaling_scales
-          weights_mat[,i] = beta_orig
-          
-          n_beta <- length(beta_orig)
-          
-          # Compute beta_RSS: sum of squared beta estimates
-          beta_RSS <- sum(beta_orig^2)
-          
-          # Compute the modified BIC based on beta
-          results_comb$BIC[i] <- n_beta * log(beta_RSS / n_beta) + log(n_beta) * (k * nonzero)
-          #cat("Processed row", i, "\n")
-        }
-        # Identify the optimal parameters (k and nonzero) that minimize the BIC
-        optimal_params <- results_comb[which.min(results_comb$BIC), ]
-        print(optimal_params)
-        #print(which.min(results_comb$BIC))
-        k_optim = optimal_params$k
-        nonzero_optim = optimal_params$q
-        beta_orig = weights_mat[,which.min(results_comb$BIC)]
-        #inter_weight <- optimize_llk(as.matrix(annotation_spca), meSuSieObject_obj$alpha[[l_index]], rep(0, ncol(annotation_spca)))
-        #cat(inter_weight,"\n")
-        # gamma <- inter_weight 
-        # V_k <- spca_result$loadings
-        # beta_std <- V_k %*% gamma
-        #beta_orig <- beta_std / scaling_scales
-        idx = match(rownames(weights_mat),colnames(as.matrix(annot))) 
-        beta_annot = rep(0,ncol(as.matrix(annot)))
-        beta_annot[idx] = beta_orig
-        z <- as.matrix(annot) %*% beta_annot
-        z_stable <- z - max(z)
-        updated_prior <- exp(z_stable) / sum(exp(z_stable))
-        #updated_prior<-exp(as.matrix(annot)%*%beta_annot)/sum(exp(as.matrix(annot)%*%beta_annot))
-        
-      }else if (annot_method == "irwu"){
-        
-        updated_prior<-drop(estimate_prior_annot(as.matrix(annot_file_subset), rowSums(meSuSieObject_obj$alpha[[l_index]])))
-        
+        results_comb$BIC <- NA
+        weights_mat = matrix(NA,nrow = nrow(spca_result$loadings) ,ncol = nrow(results_comb))
+        rownames(weights_mat) = colnames(annotation_nonconst_scaled)
       }
     }
-    updated_prior_list[[l_index]] = kronecker(updated_prior, t(ancestry_weight), FUN = "*")
-  }
-  
-  
-  if(!is.null(annot)){
-    ##update weight iteratively
+    
+    updated_prior_list<-list()
+    annot_weights_list<-list() # Initialize list to store the annotation weights
+    
+    for (l_index in seq(1,L,1)) {
+      input.response<-rowSums(meSuSieObject_obj$alpha[[l_index]])
+      
+      if(max(diag(meSuSieObject_obj$V[[l_index]]))<1e-9|max(input.response)>0.999){
+        updated_prior <- rep(1/nrow(annot),nrow(annot))
+        annot_weights_list[[l_index]] <- rep(0, ncol(as.matrix(annot))) 
+      }else{
+        if(annot_method == "glmnet"){
+          response.matrix<-matrix(c(1-input.response, input.response),length(input.response),2)
+          try.index<-try(cv.logistic<-cv.glmnet(x=as.matrix(annot),y=response.matrix, family='multinomial',alpha=0.5,type.measure = 'deviance'))
+          if(class(try.index)[1]!='try-error'){
+            cv.index<-which(cv.logistic$lambda==cv.logistic$lambda.min)
+            glm.beta<-as.matrix(c(cv.logistic$glmnet.fit$a0[cv.index],cv.logistic$glmnet.fit$beta[[2]][,cv.index]))
+            updated_prior<-exp(as.matrix(cbind(1,annot))%*%glm.beta)/sum(exp(as.matrix(cbind(1,annot))%*%glm.beta))
+            
+            # Save glmnet weights
+            annot_weights_list[[l_index]] <- cv.logistic$glmnet.fit$beta[[2]][,cv.index] 
+          }else{
+            updated_prior <- rep(1/nrow(annot),nrow(annot))
+            annot_weights_list[[l_index]] <- rep(0, ncol(as.matrix(annot)))
+          }
+        }else if (annot_method == "mlk"){
+          
+          # DIRECT OPTIMIZATION (For 1-14 annotations)
+          if(ncol(as.matrix(annot)) < 15) {
+            inter_weight <- optimize_llk(as.matrix(annot), meSuSieObject_obj$alpha[[l_index]], rep(0, ncol(as.matrix(annot))))
+            
+            # Save Direct Weights
+            names(inter_weight) <- colnames(as.matrix(annot)) 
+            annot_weights_list[[l_index]] <- inter_weight     
+            
+            z <- as.matrix(annot) %*% inter_weight
+            z_stable <- z - max(z) 
+            updated_prior <- exp(z_stable) / sum(exp(z_stable))
+            
+          } else {
+            # SPCA OPTIMIZATION (For 15+ annotations)
+            for(i in 1:nrow(results_comb)) {
+              k <- results_comb$k[i]
+              nonzero <- results_comb$q[i]
+              current_loadings <- loadings_list[[paste0("k", k, "_q", nonzero)]]
+              
+              annotation_spca <- annotation_nonconst_scaled %*% current_loadings
+              inter_weight <- optimize_llk(as.matrix(annotation_spca), meSuSieObject_obj$alpha[[l_index]], rep(0, ncol(annotation_spca)))
+              gamma <- inter_weight 
+              V_k <- current_loadings
+              beta_std <- V_k %*% gamma
+              beta_orig <- beta_std / scaling_scales
+              weights_mat[,i] = beta_orig
+              
+              n_beta <- length(beta_orig)
+              beta_RSS <- sum(beta_orig^2)
+              results_comb$BIC[i] <- n_beta * log(beta_RSS / n_beta) + log(n_beta) * (k * nonzero)
+            }
+            optimal_params <- results_comb[which.min(results_comb$BIC), ]
+            k_optim = optimal_params$k
+            nonzero_optim = optimal_params$q
+            beta_orig = weights_mat[,which.min(results_comb$BIC)]
+            idx = match(rownames(weights_mat),colnames(as.matrix(annot))) 
+            
+            beta_annot = rep(0,ncol(as.matrix(annot)))
+            beta_annot[idx] = beta_orig
+            
+            # Save SPCA Weights
+            names(beta_annot) <- colnames(as.matrix(annot))   
+            annot_weights_list[[l_index]] <- beta_annot       
+            
+            z <- as.matrix(annot) %*% beta_annot
+            z_stable <- z - max(z)
+            updated_prior <- exp(z_stable) / sum(exp(z_stable))
+            
+            # PRINT TOP WEIGHTS FOR CAUSAL EFFECT 1 TO CONSOLE
+            if (l_index == 1) {
+              cat("\n--- Top Annotations for Effect L=1 ---\n")
+              sorted_weights <- sort(abs(beta_annot), decreasing = TRUE)
+              print(sorted_weights[1:min(10, length(sorted_weights))])
+            }
+          }
+          
+        }else if (annot_method == "irwu"){
+          updated_prior<-drop(estimate_prior_annot(as.matrix(annot_file_subset), rowSums(meSuSieObject_obj$alpha[[l_index]])))
+          annot_weights_list[[l_index]] <- rep(0, ncol(as.matrix(annot))) # Placeholder if IRWU used
+        }
+      }
+      updated_prior_list[[l_index]] = kronecker(updated_prior, t(ancestry_weight), FUN = "*")
+    }
+    
+    # SECOND LOOP: Update fine-mapping with the new functional priors
     n_iter = 0
     for (iter in 1:max_iter) {
-      
       comp_residual<-meSuSieObject_obj$compute_residual(meSuSieData_obj,meSuSieObject_obj)
       for (l_index in seq(1,L,1)) {
-        
         comp_residual = comp_residual + meSuSieObject_obj$Xr[[l_index]]
         if(est_annot_prior == "optim"){
           SER_res<-single_effect_regression_annot(comp_residual,meSuSieData_obj$XtX.diag, meSuSieObject_obj,l_index,updated_prior_list[[l_index]],est_annot_prior)
         }else if(est_annot_prior == "fixed"){
-          
           V_input<-as.matrix(meSuSieObject_obj$V[[l_index]],ncol=n_ancestry,nrow=n_ancestry)
           SER_res<-single_effect_regression_annot(comp_residual,meSuSieData_obj$XtX.diag, meSuSieObject_obj,l_index,updated_prior_list[[l_index]],est_annot_prior,prior_var = V_input)
-          
         }
-        #SER_res<-single_effect_regression_annot(comp_residual,meSuSieData_obj$XtX.diag, meSuSieObject_obj,l_index,updated_prior_list[[l_index]],est_annot_prior)
-        
         meSuSieObject_obj$par_update(SER_res,l_index)
-        
         meSuSieObject_obj$compute_KL(SER_res,meSuSieObject_obj$compute_SER_posterior_loglik(meSuSieData_obj,comp_residual,SER_res$b1b2),l_index)
-        
         meSuSieObject_obj$compute_Xr(meSuSieData_obj,SER_res$b1b2$EB1,l_index)
-        
         comp_residual = comp_residual - meSuSieObject_obj$Xr[[l_index]]
-        
       }
-      
-      #pb$tick(tokens = list(iteration = iter))
-      
       updated_sigma2 = meSuSieObject_obj$update_residual_variance(meSuSieData_obj,iter)
-      #print(updated_sigma2)
-      
-      #cat(meSuSieObject_obj$ELBO[iter+1])
       if((meSuSieObject_obj$ELBO[iter+1] - meSuSieObject_obj$ELBO[iter])<0.001){
         break
       }
       if(meSuSieObject_obj$estimate_residual_variance==TRUE){
         meSuSieObject_obj$sigma2 =  updated_sigma2
       }
-      # print(meSuSieObject_obj$sigma2)
       n_iter = n_iter + 1
-      #check convergence and update sigma2
     }
-  }
-  
-  
-  
-  
-  
+    
+    # Attach the final weights to the output object
+    meSuSieObject_obj$annot_weights <- annot_weights_list
+    
+  } # <-- END OF MASTER ANNOTATION WRAPPER
   
   cat("\n# Data analysis is done, and now generates result \n\n")
   ###Use function in Utility to output result
@@ -285,6 +245,10 @@ mafpc_core<-function(R_mat_list,summary_stat_list,L,residual_variance=NULL,prior
   cat(c("\n# Total time used for the analysis:",paste0(round(as.numeric(difftime(time_end,time_start,units=c("mins"))),2)," mins\n")))
   return(meSuSieObject_obj)
 }
+
+
+
+
 
 
 meSuSieObject <- R6Class("meSuSieObject",public = list(
@@ -436,7 +400,7 @@ meSuSieObject <- R6Class("meSuSieObject",public = list(
     cat("\n Use meSusie_plot_pip() for Mahattan and PIP Plot")
     
   }
-
+  
 ),lock_objects = F
 )
 
