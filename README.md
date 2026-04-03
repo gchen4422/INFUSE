@@ -3,7 +3,7 @@
 INFUSE: INtegrating Functional annotations into mUlti-ancestry fine-mapping via Sum of single Effect model.
 
 
-![INFUSE logo](INFUSE.jpg)
+![INFUSE logo](INFUSE.png)
 
 
 ## Installation
