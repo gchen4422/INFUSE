@@ -1,4 +1,4 @@
-# MAFPC
+# INFUSE
 
 Multi-Ancestry Fine-Mapping with functional Principal Components: joint fine-mapping across ancestries with functional annotations. *Preliminary R package.*
 
@@ -17,10 +17,10 @@ library(MAFPC)
 ```
 ## Core function
 
-### `mafpc_core()`
+### `infuse_core()`
 
 ```r
-mafpc_core <- function(
+infuse_core <- function(
   R_mat_list,              # named list of LD correlation matrices by ancestry (SNP x SNP)
   summary_stat_list,       # named list of data.frames with SNP, A1, A2, BETA, SE (harmonized, same SNP order)
   L,                       # integer: max number of causal signals
