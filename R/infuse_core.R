@@ -244,6 +244,168 @@ infuse_core<-function(R_mat_list,summary_stat_list,L,residual_variance=NULL,prio
 }
 
 
+
+
+
+                                    
+                                    
+meSuSieObject <- R6Class("meSuSieObject",public = list(
+  initialize = function(p,L,N_ancestry, residual_variance,prior_weights,estimate_prior_method,estimate_residual_variance,max_iter){
+    
+    self$name_config = Reduce(append , lapply(seq(1,N_ancestry),function(x){
+      poss_config = combn(1:N_ancestry,x)
+      apply(poss_config,2,function(x)paste(x, collapse = '_'))
+    }))
+    
+    
+    self$column_config = Reduce(append,lapply(seq(1,N_ancestry),function(x){
+      poss_config = combn(1:N_ancestry,x)
+      lapply(1:ncol(poss_config), function(y)return(matrix(poss_config[,y])))
+    }))
+    self$alpha =rep(list(matrix(0,nrow = p,ncol = N_ancestry)),L)
+    self$mu1 = rep(list(lapply(self$column_config,function(x){matrix(0,nrow = p,ncol = length(x))})),L)
+    self$mu2 = rep(list(lapply(self$column_config,function(x){matrix(0,nrow = p,ncol = length(x))})),L)
+    self$EB1 =rep(list(matrix(0,nrow = p,ncol = N_ancestry)),L)
+    self$EB2 =rep(list(matrix(0,nrow = p,ncol = N_ancestry)),L)
+    
+    self$Xr     = rep(list(matrix(0,nrow = p,ncol=N_ancestry)),L)
+    self$KL     = rep(as.numeric(NA),L)
+    self$lbf    = rep(as.numeric(NA),L)
+    self$lbf_variable = vector("list",L)
+    self$ELBO = rep(NA,max_iter)
+    self$ELBO[1] = -Inf
+    self$sigma2 = residual_variance
+    
+    
+    self$V      = rep(list(matrix(0,ncol = N_ancestry,nrow=N_ancestry)),L)
+    self$pi     = prior_weights
+    
+    self$estimate_prior_method = estimate_prior_method
+    self$estimate_residual_variance = estimate_residual_variance
+    
+    self$L = L
+    self$nSNP = p
+    self$nancestry = N_ancestry
+    
+    self$cs = list()
+    self$pip = rep(as.numeric(NA),p)
+    self$pip_config = matrix(as.numeric(NA),p,2^N_ancestry-1)
+  },    
+  
+  compute_Xb = function (meSuSie_Data,b){
+    lapply(1:length(meSuSie_Data$XtX_list),function(x){
+      meSuSie_Data$XtX_list[[x]]%*%b[x,]
+    })},
+  
+  compute_residual = function (meSuSie_Data,meSuSie_Obj) {
+    residual<-Reduce(cbind,meSuSie_Data$Xty_list)-Reduce("+",meSuSie_Obj$Xr)
+    return(residual)
+  },
+  compute_Xr = function(meSuSie_Data,b1b2,l_index){
+    self$Xr[[l_index]] = Reduce(cbind,lapply(1:self$nancestry,function(ancestry_index)meSuSie_Data$XtX_list[[ancestry_index]]%*%b1b2[,ancestry_index]))
+  },
+  # compute_Xr = function(meSuSie_Data,SER_res,l_index){
+  #   self$Xr[[l_index]] = t(Reduce(cbind,lapply(1:self$nancestry,function(ancestry_index)meSuSie_Data$XtX_list[[ancestry_index]]%*%(SER_res$mu1_multi[,ancestry_index]*SER_res$alpha))))
+  # },
+  
+  par_update = function(SER_res,l_index){
+    self$alpha[[l_index]]<-SER_res$alpha
+    self$mu1[[l_index]]<-SER_res$mu1_multi
+    self$mu2[[l_index]]<-SER_res$mu2_multi
+    self$lbf_variable[[l_index]]<-SER_res$lbf_multi
+    self$V[[l_index]]<-SER_res$V
+    self$EB1[[l_index]] =SER_res$b1b2$EB1
+    self$EB2[[l_index]] =SER_res$b1b2$EB2
+    
+  },
+  #  compute_SER_posterior_loglik = function(meSuSie_Data,comp_residual,l_index){
+  #   return(Reduce("+",lapply(1:self$nancestry,function(x){
+  #     sum(-0.5/self$sigma2[[x]]*(-2*comp_residual*self$mu1[[l_index]][,x]*self$alpha[l_index,]+meSuSie_Data$XtX.diag[[x]]*self$mu2[[l_index]][,x]*self$alpha[l_index,]))
+  #    })))
+  
+  # },
+  compute_SER_posterior_loglik = function(meSuSie_Data,comp_residual,b1b2){
+    
+    #print(-0.5/self$sigma2[[x]])
+    
+    return(Reduce("+",lapply(1:self$nancestry,function(x){
+      sum(-0.5/self$sigma2[[x]]*(-2*comp_residual[,x]*b1b2$EB1[,x]+meSuSie_Data$XtX.diag[[x]]*b1b2$EB2[,x]))
+    })))
+    
+  },
+  
+  compute_KL = function(SER_res,value,l_index){
+    
+    self$KL[l_index] = -SER_res$loglik+value
+    #print(-SER_res$loglik)
+    #print(value)
+    
+  },
+  
+  update_residual_variance = function(meSuSie_Data,niter){
+    
+    
+    B_1_ancestry = lapply(1:self$nancestry,function(y)Reduce(cbind,lapply(self$EB1,function(x)x[,y])))
+    
+    
+    BXXB = lapply(1:self$nancestry,function(x){
+      sum((t(B_1_ancestry[[x]])%*% meSuSie_Data$XtX_list[[x]])*t(B_1_ancestry[[x]]))
+    })  ####{E(BX)}^2
+    
+    betabar = Reduce("+",self$EB1)
+    
+    BbarXXBbar = lapply(1:self$nancestry,function(x){
+      sum(betabar[,x]*(meSuSie_Data$XtX_list[[x]]%*%betabar[,x]))
+    }) ###{E(BbarX)}^2
+    
+    BbarXty = lapply(1:self$nancestry,function(x){
+      2*sum(betabar[,x]*meSuSie_Data$Xty_list[[x]])
+    }) ###{E(BbarX)}^2
+    
+    
+    
+    B_2_ancestry = lapply(1:self$nancestry,function(y)Reduce(cbind,lapply(self$EB2,function(x)x[,y])))
+    
+    XXB2 = lapply(1:self$nancestry,function(x){
+      sum(meSuSie_Data$XtX.diag[[x]]*B_2_ancestry[[x]])
+    })
+    
+    updated_sigma = lapply(1:self$nancestry,function(x){
+      
+      ((meSuSie_Data$yty_list[[x]]-BbarXty[[x]]+BbarXXBbar[[x]])+(XXB2[[x]]-BXXB[[x]]))/meSuSie_Data$N_list[[x]]
+    })
+    
+    
+    self$ELBO[niter+1] = Reduce(sum,lapply(1:self$nancestry,function(x){
+      -meSuSie_Data$N_list[[x]]/2*log(2*pi*self$sigma2[x])-(1/(2*self$sigma2[x]))*((meSuSie_Data$yty_list[[x]]-BbarXty[[x]]+BbarXXBbar[[x]])+(XXB2[[x]]-BXXB[[x]]))
+    }))-sum(self$KL)
+    
+    #print(sum(self$KL))
+    
+    return( unlist(updated_sigma))
+  },
+  
+  get_result = function(cs, pip, pip_config){
+    self$cs = cs
+    self$pip = pip
+    self$pip_config = pip_config
+  },
+  mesusie_summary = function(meSuSie_Data){
+    
+    cat(c(paste0("Potential causal SNPs with PIP > 0.5: "),meSuSie_Data$Summary_Stat[[1]]$SNP[which(self$pip>0.5)],"\n\n"))
+    cat("Credible sets for effects: \n")
+    print(self$cs)
+    cat("\n Use meSusie_plot_pip() for Mahattan and PIP Plot")
+    
+  }
+  
+),lock_objects = F
+)
+
+
+
+                                    
+
 ##############################################################
 #  Assume var(y) = 1 and causal snps contribute negligible variance
 #  therefore se(\beta) = var(y)*diag(xtx) => diag(xtx) = var(y)/se(beta)
