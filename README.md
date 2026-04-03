@@ -1,6 +1,6 @@
 # INFUSE
 
-Multi-Ancestry Fine-Mapping with functional Principal Components: joint fine-mapping across ancestries with functional annotations. *Preliminary R package.*
+INtegrating Functional annotations into mUlti-ancestry fine-mapping via Sum of single Effect model *Preliminary R package.*
 
 ## Installation
 
@@ -9,11 +9,11 @@ Multi-Ancestry Fine-Mapping with functional Principal Components: joint fine-map
 install.packages("devtools")
 
 # Install from GitHub
-devtools::install_github("gchen4422/MAFPC")
+devtools::install_github("gchen4422/INFUSE")
 
 
 # Load the package
-library(MAFPC)
+library(INFUSE)
 ```
 ## Core function
 
