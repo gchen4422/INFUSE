@@ -7,19 +7,19 @@
 allele_flip(sumstat, ref)
 }
 \arguments{
-\item{sumstat}{A data frame containing the summary statistics data with at least 
+\item{sumstat}{A data frame containing the summary statistics data with at least
 the columns "REF".}
 
-\item{ref}{A data frame serving as the reference with at least the columns 
+\item{ref}{A data frame serving as the reference with at least the columns
 "REF", "ALT", "BETA", and "SE".}
 }
 \value{
-A modified version of `ref` where alleles have been flipped to match 
-`sumstat` and corresponding statistics (BETA and Z) have been updated accordingly.
+A modified version of \code{ref} where alleles have been flipped to match
+\code{sumstat} and corresponding statistics (BETA and Z) have been updated accordingly.
 }
 \description{
-This function modifies the reference dataset (`ref`) based on the summary 
-statistics dataset (`sumstat`) to ensure that the alleles match. If the alleles 
-do not match, the function will flip the alleles and corresponding statistics 
+This function modifies the reference dataset (\code{ref}) based on the summary
+statistics dataset (\code{sumstat}) to ensure that the alleles match. If the alleles
+do not match, the function will flip the alleles and corresponding statistics
 in the reference dataset.
 }

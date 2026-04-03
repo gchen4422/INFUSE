@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // loglik_cpp_R6
 double loglik_cpp_R6(arma::vec V, const arma::mat& betahat, const arma::mat& shat2, const arma::vec& prior_weight, const int nancestry, arma::uvec diag_index);
-RcppExport SEXP _mesusiehelpers_loglik_cpp_R6(SEXP VSEXP, SEXP betahatSEXP, SEXP shat2SEXP, SEXP prior_weightSEXP, SEXP nancestrySEXP, SEXP diag_indexSEXP) {
+RcppExport SEXP _INFUSE_loglik_cpp_R6(SEXP VSEXP, SEXP betahatSEXP, SEXP shat2SEXP, SEXP prior_weightSEXP, SEXP nancestrySEXP, SEXP diag_indexSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,7 +29,7 @@ END_RCPP
 }
 // mvlmm_reg
 SEXP mvlmm_reg(arma::mat betahat, arma::mat shat2, arma::mat V_mat);
-RcppExport SEXP _mesusiehelpers_mvlmm_reg(SEXP betahatSEXP, SEXP shat2SEXP, SEXP V_matSEXP) {
+RcppExport SEXP _INFUSE_mvlmm_reg(SEXP betahatSEXP, SEXP shat2SEXP, SEXP V_matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -42,7 +42,7 @@ END_RCPP
 }
 // test_ELBO
 SEXP test_ELBO(arma::mat alpha, arma::cube mu1, arma::cube mu2, arma::cube XtX, arma::mat XtX_diag, arma::mat Xty, arma::vec yty, arma::vec N_vec, arma::vec sigma2, double KL);
-RcppExport SEXP _mesusiehelpers_test_ELBO(SEXP alphaSEXP, SEXP mu1SEXP, SEXP mu2SEXP, SEXP XtXSEXP, SEXP XtX_diagSEXP, SEXP XtySEXP, SEXP ytySEXP, SEXP N_vecSEXP, SEXP sigma2SEXP, SEXP KLSEXP) {
+RcppExport SEXP _INFUSE_test_ELBO(SEXP alphaSEXP, SEXP mu1SEXP, SEXP mu2SEXP, SEXP XtXSEXP, SEXP XtX_diagSEXP, SEXP XtySEXP, SEXP ytySEXP, SEXP N_vecSEXP, SEXP sigma2SEXP, SEXP KLSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -62,7 +62,7 @@ END_RCPP
 }
 // test_run_loglik_cpp
 double test_run_loglik_cpp(arma::vec V, const arma::mat& betahat, const arma::mat& shat2, const arma::mat& prior_weight, const int nancestry, arma::uvec diag_index, Rcpp::List config_list);
-RcppExport SEXP _mesusiehelpers_test_run_loglik_cpp(SEXP VSEXP, SEXP betahatSEXP, SEXP shat2SEXP, SEXP prior_weightSEXP, SEXP nancestrySEXP, SEXP diag_indexSEXP, SEXP config_listSEXP) {
+RcppExport SEXP _INFUSE_test_run_loglik_cpp(SEXP VSEXP, SEXP betahatSEXP, SEXP shat2SEXP, SEXP prior_weightSEXP, SEXP nancestrySEXP, SEXP diag_indexSEXP, SEXP config_listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,7 +79,7 @@ END_RCPP
 }
 // test_run_mvlmm_reg
 SEXP test_run_mvlmm_reg(arma::mat betahat, arma::mat shat2, arma::mat V_mat);
-RcppExport SEXP _mesusiehelpers_test_run_mvlmm_reg(SEXP betahatSEXP, SEXP shat2SEXP, SEXP V_matSEXP) {
+RcppExport SEXP _INFUSE_test_run_mvlmm_reg(SEXP betahatSEXP, SEXP shat2SEXP, SEXP V_matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -92,7 +92,7 @@ END_RCPP
 }
 // estimate_prior_annot
 arma::vec estimate_prior_annot(const arma::mat& annot_file_subset, const arma::vec& alpha);
-RcppExport SEXP _mesusiehelpers_estimate_prior_annot(SEXP annot_file_subsetSEXP, SEXP alphaSEXP) {
+RcppExport SEXP _INFUSE_estimate_prior_annot(SEXP annot_file_subsetSEXP, SEXP alphaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -104,7 +104,7 @@ END_RCPP
 }
 // llk_prior_causal_cpp
 double llk_prior_causal_cpp(const arma::vec& w, const arma::mat& annotation, const arma::mat& alpha);
-RcppExport SEXP _mesusiehelpers_llk_prior_causal_cpp(SEXP wSEXP, SEXP annotationSEXP, SEXP alphaSEXP) {
+RcppExport SEXP _INFUSE_llk_prior_causal_cpp(SEXP wSEXP, SEXP annotationSEXP, SEXP alphaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -117,7 +117,7 @@ END_RCPP
 }
 // optimize_llk
 arma::vec optimize_llk(const arma::mat& annotation, const arma::mat& alpha, arma::vec initial_w);
-RcppExport SEXP _mesusiehelpers_optimize_llk(SEXP annotationSEXP, SEXP alphaSEXP, SEXP initial_wSEXP) {
+RcppExport SEXP _INFUSE_optimize_llk(SEXP annotationSEXP, SEXP alphaSEXP, SEXP initial_wSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -130,7 +130,7 @@ END_RCPP
 }
 // rcpp_hello_world
 List rcpp_hello_world();
-RcppExport SEXP _mesusiehelpers_rcpp_hello_world() {
+RcppExport SEXP _INFUSE_rcpp_hello_world() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -140,19 +140,19 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mesusiehelpers_loglik_cpp_R6", (DL_FUNC) &_mesusiehelpers_loglik_cpp_R6, 6},
-    {"_mesusiehelpers_mvlmm_reg", (DL_FUNC) &_mesusiehelpers_mvlmm_reg, 3},
-    {"_mesusiehelpers_test_ELBO", (DL_FUNC) &_mesusiehelpers_test_ELBO, 10},
-    {"_mesusiehelpers_test_run_loglik_cpp", (DL_FUNC) &_mesusiehelpers_test_run_loglik_cpp, 7},
-    {"_mesusiehelpers_test_run_mvlmm_reg", (DL_FUNC) &_mesusiehelpers_test_run_mvlmm_reg, 3},
-    {"_mesusiehelpers_estimate_prior_annot", (DL_FUNC) &_mesusiehelpers_estimate_prior_annot, 2},
-    {"_mesusiehelpers_llk_prior_causal_cpp", (DL_FUNC) &_mesusiehelpers_llk_prior_causal_cpp, 3},
-    {"_mesusiehelpers_optimize_llk", (DL_FUNC) &_mesusiehelpers_optimize_llk, 3},
-    {"_mesusiehelpers_rcpp_hello_world", (DL_FUNC) &_mesusiehelpers_rcpp_hello_world, 0},
+    {"_INFUSE_loglik_cpp_R6", (DL_FUNC) &_INFUSE_loglik_cpp_R6, 6},
+    {"_INFUSE_mvlmm_reg", (DL_FUNC) &_INFUSE_mvlmm_reg, 3},
+    {"_INFUSE_test_ELBO", (DL_FUNC) &_INFUSE_test_ELBO, 10},
+    {"_INFUSE_test_run_loglik_cpp", (DL_FUNC) &_INFUSE_test_run_loglik_cpp, 7},
+    {"_INFUSE_test_run_mvlmm_reg", (DL_FUNC) &_INFUSE_test_run_mvlmm_reg, 3},
+    {"_INFUSE_estimate_prior_annot", (DL_FUNC) &_INFUSE_estimate_prior_annot, 2},
+    {"_INFUSE_llk_prior_causal_cpp", (DL_FUNC) &_INFUSE_llk_prior_causal_cpp, 3},
+    {"_INFUSE_optimize_llk", (DL_FUNC) &_INFUSE_optimize_llk, 3},
+    {"_INFUSE_rcpp_hello_world", (DL_FUNC) &_INFUSE_rcpp_hello_world, 0},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_mesusiehelpers(DllInfo *dll) {
+RcppExport void R_init_INFUSE(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
