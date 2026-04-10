@@ -1,0 +1,70 @@
+---
+title: "About INFUSE"
+author: "Guangxin Chen"
+date: "2026-04-10"
+site: workflowr::wflow_site
+output:
+  workflowr::wflow_html:
+    toc: true
+editor_options:
+  chunk_output_type: console
+---
+
+# About INFUSE
+
+## Project Description
+
+**INFUSE** (**IN**tegrating **F**unctional annotations into m**U**lti-ancestry fine-mapping via **S**um of single **E**ffect model) is a statistical genetics software package for fine-mapping causal variants from GWAS summary statistics across multiple ancestry populations. INFUSE is built on the Sum of Single Effects (SuSiE) regression framework and extends it to handle:
+
+- Joint modeling of multiple ancestries with ancestry-specific LD matrices
+- Annotation-informed prior probabilities for causal variant prioritization
+- Optional ancestry weighting to reflect sample size or study design differences
+- Residual variance estimation for robust inference
+
+INFUSE is implemented in R with performance-critical components written in C++.
+
+---
+
+## Authors
+
+- **Guangxin Chen** — primary developer
+  Department of Statistics, Purdue University
+
+---
+
+## Citation
+
+If you use INFUSE in published research, please cite:
+
+> Chen G, et al. INFUSE: INtegrating Functional annotations into mUlti-ancestry fine-mapping via Sum of single Effect model. *Manuscript in preparation*, 2026.
+
+A BibTeX entry will be provided upon publication.
+
+---
+
+## Related Work and Software
+
+INFUSE builds upon and is related to the following methods:
+
+- **SuSiE** ([Wang et al., 2020](https://doi.org/10.1111/rssb.12388)) — the single-ancestry Sum of Single Effects fine-mapping model
+- **MESuSiE** ([Gao et al., 2023](https://doi.org/10.1038/s41588-023-01604-7)) — multi-ancestry extension of SuSiE for shared causal signals
+- **susieR** ([R package](https://stephenslab.github.io/susieR/)) — reference implementation of SuSiE
+- **PolyFun** ([Weissbrod et al., 2020](https://doi.org/10.1038/s41588-020-00735-5)) — functional prior annotation-based fine-mapping
+
+---
+
+## Source Code
+
+The INFUSE R package source code is available at:
+
+> [https://github.com/gchen4422/INFUSE](https://github.com/gchen4422/INFUSE)
+
+Bug reports and feature requests can be submitted via the GitHub Issues page.
+
+---
+
+## License
+
+INFUSE is distributed under the **MIT License**. See `LICENSE` in the repository root for details.
+
+This website's content is licensed under [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
