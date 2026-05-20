@@ -22,8 +22,15 @@ Imports:
     progress,
     nloptr,
     elasticnet,
-    glmnet
+    glmnet,
+    Matrix,
+    ggplot2,
+    mixsqp,
+    stats
 LinkingTo:
     Rcpp,
     RcppArmadillo
 NeedsCompilation: yes
+Depends: 
+    R (>= 3.5)
+LazyData: true
