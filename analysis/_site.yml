@@ -13,8 +13,10 @@ navbar:
     menu:
     - text: Annotation Integration
       href: annotation_integration.html
-    - text: Simulation Benchmark
-      href: simulation_benchmark.html
+    #- text: Simulation Benchmark 
+    #  href: simulation_benchmark.html
+    - text: Data Preparation
+      href: Data_prepare.html
     - text: Real Data Example
       href: real_data_example.html
   - text: About
