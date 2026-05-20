@@ -79,7 +79,6 @@ where $\mathbf{w}_\ell \in \mathbb{R}^k$ now operates on the low-dimensional spa
 | `$annot_weights` | Estimated annotation weight vectors $\{\mathbf{w}_\ell\}_{\ell=1}^L$ |
 | `$alpha` | Posterior probability matrix ($L \times m$) for each single-effect component |
 | `$lbf` | Log Bayes factors per SNP |
-| `$config_probs` | Estimated ancestry configuration probabilities $(\phi_{11}, \phi_{10}, \phi_{01})$ |
 
 ## When to Use INFUSE
 
