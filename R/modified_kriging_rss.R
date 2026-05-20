@@ -69,63 +69,60 @@ estimate_s_rss_joint <- function(z1, z2,
 }
 
 
-#’ Joint LD-discrepancy test for two ancestries
-#’
-#’ @description
-#’ A novel multi-ancestry extension of the \code{kriging_rss} diagnostic
-#’ (Zhu & Stephens, 2018) that jointly tests for LD mismatches and allele
-#’ flips across two ancestries simultaneously. For each variant, the
-#’ conditional distribution of its z-score given all others is computed under
-#’ the stacked model \eqn{(z_1, z_2) \sim N(0,\, (1-s)R + sI)}, where
-#’ \eqn{R = \mathrm{blockdiag}(R_1, R_2)} and the regularization parameter
-#’ \eqn{s} is estimated jointly by maximum likelihood via
-#’ \code{\link{estimate_s_rss_joint}}. A mixture-of-normals model is then fit
-#’ to the standardized residuals, and a log-likelihood ratio (logLR) flags
-#’ variants whose z-scores are inconsistent with LD — indicative of allele
-#’ flips or other reference-panel mismatches. The joint logLR combines
-#’ evidence across both ancestries, increasing sensitivity over single-ancestry
-#’ diagnostics.
-#’
-#’ @param z1 Numeric vector of z-scores from ancestry 1 (\eqn{p} variants).
-#’ @param z2 Numeric vector of z-scores from ancestry 2 (\eqn{p} variants,
-#’   same order as \code{z1}).
-#’ @param R1 Symmetric \eqn{p \times p} LD correlation matrix for ancestry 1.
-#’ @param R2 Symmetric \eqn{p \times p} LD correlation matrix for ancestry 2.
-#’ @param n1 Integer sample size for ancestry 1. Used for finite-sample
-#’   z-score shrinkage; ignored if \code{NULL}.
-#’ @param n2 Integer sample size for ancestry 2. Used for finite-sample
-#’   z-score shrinkage; ignored if \code{NULL}.
-#’ @param r_tol Numeric tolerance for flooring small negative eigenvalues
-#’   (default \code{1e-8}).
-#’ @param s Numeric regularization parameter in \eqn{[0,1]}. If \code{NULL}
-#’   (default), estimated jointly from the data via
-#’   \code{\link{estimate_s_rss_joint}}.
-#’
-#’ @return A list with two components:
-#’ \describe{
-#’   \item{\code{plot}}{A \code{ggplot2} scatter of observed vs. expected
-#’     z-scores, colored by ancestry. Variants flagged as potential allele
-#’     flips (logLR > 2 and |z_std_diff| > 4) are highlighted in red.}
-#’   \item{\code{conditional_dist}}{A data frame with one row per variant
-#’     (stacked ancestry 1 then ancestry 2) and columns:
-#’     \code{ancestry}, \code{z}, \code{condmean}, \code{condvar},
-#’     \code{z_std_diff}, \code{logLR} (per-variant), \code{logLR_joint}
-#’     (sum of logLR across both ancestries for the same variant).}
-#’ }
-#’
-#’ @references
-#’ Zhu, X. & Stephens, M. (2018). Large-scale genome-wide enrichment analyses
-#’ identify new trait-associated genes and pathways. \emph{Nature Communications},
-#’ 9, 4361. \doi{10.1038/s41467-018-06805-x}
-#’
-#’ @importFrom Matrix bdiag
-#’ @importFrom stats optim dnorm
-#’ @importFrom ggplot2 ggplot aes geom_point geom_abline theme_bw labs
-#’ @importFrom mixsqp mixsqp
-#’ @export
-
-
-kriging_rss_joint<- function(z1, z2, R1, R2,
+#' Joint LD-discrepancy test for two ancestries
+#'
+#' @description
+#' A novel multi-ancestry extension of the \code{kriging_rss} diagnostic
+#' (Zhu & Stephens, 2018) that jointly tests for LD mismatches and allele
+#' flips across two ancestries simultaneously. For each variant, the
+#' conditional distribution of its z-score given all others is computed under
+#' the stacked model \eqn{(z_1, z_2) \sim N(0,\, (1-s)R + sI)}, where
+#' \eqn{R = \mathrm{blockdiag}(R_1, R_2)} and the regularization parameter
+#' \eqn{s} is estimated jointly by maximum likelihood via
+#' \code{\link{estimate_s_rss_joint}}. A mixture-of-normals model is then fit
+#' to the standardized residuals, and a log-likelihood ratio (logLR) flags
+#' variants whose z-scores are inconsistent with LD — indicative of allele
+#' flips or other reference-panel mismatches. The joint logLR combines
+#' evidence across both ancestries, increasing sensitivity over single-ancestry
+#' diagnostics.
+#'
+#' @param z1 Numeric vector of z-scores from ancestry 1 (\eqn{p} variants).
+#' @param z2 Numeric vector of z-scores from ancestry 2 (\eqn{p} variants,
+#'   same order as \code{z1}).
+#' @param R1 Symmetric \eqn{p \times p} LD correlation matrix for ancestry 1.
+#' @param R2 Symmetric \eqn{p \times p} LD correlation matrix for ancestry 2.
+#' @param n1 Integer sample size for ancestry 1. Used for finite-sample
+#'   z-score shrinkage; ignored if \code{NULL}.
+#' @param n2 Integer sample size for ancestry 2. Used for finite-sample
+#'   z-score shrinkage; ignored if \code{NULL}.
+#' @param r_tol Numeric tolerance for flooring small negative eigenvalues
+#'   (default \code{1e-8}).
+#' @param s Numeric regularization parameter in \eqn{[0,1]}. If \code{NULL}
+#'   (default), estimated jointly from the data via
+#'   \code{\link{estimate_s_rss_joint}}.
+#'
+#' @return A list with two components:
+#' \describe{
+#'   \item{\code{plot}}{A \code{ggplot2} scatter of observed vs. expected
+#'     z-scores, colored by ancestry. Variants flagged as potential allele
+#'     flips (logLR > 2 and |z_std_diff| > 4) are highlighted in red.}
+#'   \item{\code{conditional_dist}}{A data frame with one row per variant
+#'     (stacked ancestry 1 then ancestry 2) and columns:
+#'     \code{ancestry}, \code{z}, \code{condmean}, \code{condvar},
+#'     \code{z_std_diff}, \code{logLR} (per-variant), \code{logLR_joint}
+#'     (sum of logLR across both ancestries for the same variant).}
+#' }
+#'
+#' @references
+#' Zhu, X. & Stephens, M. (2018). Large-scale genome-wide enrichment analyses
+#' identify new trait-associated genes and pathways. \emph{Nature Communications},
+#' 9, 4361. \doi{10.1038/s41467-018-06805-x}
+#'
+#' @importFrom Matrix bdiag
+#' @importFrom stats optim dnorm
+#' @importFrom ggplot2 ggplot aes geom_point geom_abline theme_bw labs
+#' @importFrom mixsqp mixsqp
+kriging_rss_joint <- function(z1, z2, R1, R2,
                                   n1 = NULL, n2 = NULL,
                                   r_tol = 1e-8,
                                   s = NULL) {
@@ -520,28 +517,28 @@ estimate_s_rss_two_penalty <- function(z1, z2,
 
 
 
-#’ @title Joint kriging_rss with separate shrinkage λ₁,λ₂
-#’
-#’ @description
-#’ Runs conditional‐mean/variance diagnostics for two ancestries,
-#’ but first estimates (λ₁,λ₂) with a penalty and Beta(α,α) prior.
-#’
-#’ @param z1,z2      Numeric vectors of z‐scores for ancestry 1 and 2.
-#’ @param R1,R2      Correlation matrices for the two ancestries.
-#’ @param n1,n2      Sample sizes (optional) for finite‐sample z‐shrinkage.
-#’ @param rho        Penalty strength on (λ₁−λ₂)² (default 0 = independent).
-#’ @param alpha      Beta(α,α) prior shape (default α=1 = flat).
-#’ @param r_tol      Eigenvalue tolerance (default 1e-8).
-#’
-#’ @return A list with  
-#’   - `plot`: ggplot of observed vs expected z’s colored by ancestry,  
-#’   - `conditional_dist`: data.frame of ancestry, z, condmean, condvar, z_std_diff, logLR.  
-#’
-#’ @importFrom Matrix bdiag
-#’ @importFrom stats optim dnorm
-#’ @importFrom ggplot2 ggplot aes geom_point geom_abline theme_bw labs
-#’ @importFrom mixsqp mixsqp
-#’ @export
+#' @title Joint kriging_rss with separate shrinkage λ₁,λ₂
+#'
+#' @description
+#' Runs conditional‐mean/variance diagnostics for two ancestries,
+#' but first estimates (λ₁,λ₂) with a penalty and Beta(α,α) prior.
+#'
+#' @param z1,z2      Numeric vectors of z‐scores for ancestry 1 and 2.
+#' @param R1,R2      Correlation matrices for the two ancestries.
+#' @param n1,n2      Sample sizes (optional) for finite‐sample z‐shrinkage.
+#' @param rho        Penalty strength on (λ₁−λ₂)² (default 0 = independent).
+#' @param alpha      Beta(α,α) prior shape (default α=1 = flat).
+#' @param r_tol      Eigenvalue tolerance (default 1e-8).
+#'
+#' @return A list with  
+#'   - `plot`: ggplot of observed vs expected z’s colored by ancestry,  
+#'   - `conditional_dist`: data.frame of ancestry, z, condmean, condvar, z_std_diff, logLR.  
+#'
+#' @importFrom Matrix bdiag
+#' @importFrom stats optim dnorm
+#' @importFrom ggplot2 ggplot aes geom_point geom_abline theme_bw labs
+#' @importFrom mixsqp mixsqp
+#' @export
 kriging_rss_two <- function(z1, z2, R1, R2,
                               n1 = NULL, n2 = NULL,
                               rho   = 0,

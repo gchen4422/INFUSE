@@ -9,7 +9,7 @@
 INFUSE is an R package for multi-ancestry GWAS fine-mapping using summary statistics. Two key features distinguish it from existing methods:
 
 - **Functional annotation integration.** Per-SNP causal priors are learned from sparse principal components of a high-dimensional annotation matrix (e.g., BaselineLF v2.2), enabling signal-specific priors across hundreds of correlated features.
-- **Joint LD-discrepancy test (`kriging_rss_joint`).** A novel diagnostic that simultaneously flags LD mismatches and allele flips across both ancestries before fine-mapping. In simulations under allele-flipping conditions, INFUSE achieved power of 0.81 (vs. oracle 0.84), while uncorrected methods ranged from 0.05–0.27.
+- **Joint LD-discrepancy test (`kriging_rss_joint`).** A novel diagnostic that simultaneously flags LD mismatches and allele flips across both ancestries before fine-mapping, with higher sensitivity than single-ancestry approaches.
 
 ## Installation
 
