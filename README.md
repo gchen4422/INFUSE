@@ -1,10 +1,35 @@
 # INFUSE
 
-INFUSE: INtegrating Functional annotations into mUlti-ancestry fine-mapping via Sum of single Effect model.
-
+**INFUSE**: **IN**tegrating **F**unctional annotations into m**U**lti-ancestry fine-mapping via **S**um of single **E**ffect model.
 
 ![INFUSE logo](INFUSE.png)
 
+## Overview
+
+INFUSE is an R package for statistical fine-mapping of causal genetic variants
+using GWAS summary statistics from multiple ancestry groups. It makes two key
+methodological contributions:
+
+**1. High-dimensional functional annotation integration.**
+INFUSE parameterizes per-SNP causal priors via a multinomial logit model
+defined on the *sparse principal components* of a functional annotation matrix
+(e.g., BaselineLF v2.2). This allows it to incorporate hundreds of correlated
+annotations while learning a separate, signal-specific functional prior for
+each independent association signal at a locus — improving fine-mapping
+resolution, particularly at loci with multiple causal variants.
+
+**2. Joint multi-ancestry LD-discrepancy test (`kriging_rss_joint`).**
+INFUSE introduces a novel joint diagnostic that simultaneously tests for LD
+mismatches and allele flips across *both* ancestries. It stacks z-scores as
+$(z_1, z_2)$ and constructs a block-diagonal LD model
+$R = \mathrm{blockdiag}(R_1, R_2)$, estimates a shared regularization
+parameter $s$ by maximum likelihood, and computes per-variant log-likelihood
+ratios (logLR) using a mixture-of-normals model on the conditional residuals.
+A joint logLR that sums evidence across ancestries provides greater sensitivity
+than single-ancestry diagnostics, and is used to flag and remove problematic
+variants before fine-mapping. In simulations, INFUSE with joint LD-discrepancy
+correction achieved power of 0.81 under allele-flipping conditions, close to
+the oracle (0.84), while uncorrected methods ranged from 0.05 to 0.27.
 
 ## Installation
 
@@ -15,11 +40,24 @@ install.packages("devtools")
 # Install from GitHub
 devtools::install_github("gchen4422/INFUSE")
 
-
 # Load the package
 library(INFUSE)
 ```
-## Core function
+
+## Example data
+
+A ready-to-use example dataset is bundled with the package:
+
+```r
+data(infuse_example)
+
+R_mat_list           <- infuse_example$R_mat_list           # LD matrices (EUR, AFR)
+summary_stat_sd_list <- infuse_example$summary_stat_sd_list # GWAS summary stats
+annot_file_all       <- infuse_example$annot_file_all       # 1432 x 186 annotation matrix
+ancestry_weight      <- infuse_example$ancestry_weight      # prior weights c(3,3,1)/7
+```
+
+## Core functions
 
 ### `infuse_core()`
 
@@ -82,6 +120,48 @@ infuse_core <- function(
 
 - **`est_annot_prior`**  
   Annotation-prior mode (e.g., `"fixed"`).
+
+---
+
+### `kriging_rss_joint()` — Joint multi-ancestry LD-discrepancy test
+
+A novel diagnostic that simultaneously detects LD mismatches and allele flips
+across two ancestries. This is a key novelty of INFUSE: unlike single-ancestry
+diagnostics (e.g., `susieR::kriging_rss`), `kriging_rss_joint` stacks both
+ancestry z-vectors and constructs a joint conditional model, yielding a combined
+log-likelihood ratio with higher sensitivity for catching problematic variants.
+
+```r
+kriging_rss_joint(
+  z1, z2,          # z-score vectors for ancestry 1 and 2 (same SNP order)
+  R1, R2,          # LD correlation matrices for ancestry 1 and 2
+  n1 = NULL,       # sample size for ancestry 1 (enables finite-sample shrinkage)
+  n2 = NULL,       # sample size for ancestry 2
+  r_tol = 1e-8,    # eigenvalue floor for PSD enforcement
+  s = NULL         # regularization in [0,1]; estimated by MLE if NULL
+)
+```
+
+**Returns** a list with:
+- `$plot`: ggplot2 scatter of observed vs. expected z-scores colored by ancestry;
+  allele-flip candidates (logLR > 2 and |z_std_diff| > 4) highlighted in red.
+- `$conditional_dist`: data frame with columns `ancestry`, `z`, `condmean`,
+  `condvar`, `z_std_diff`, `logLR` (per-variant), `logLR_joint` (summed across
+  both ancestries for the same SNP).
+
+**Typical usage** (run before `infuse_core()` to clean the input data):
+
+```r
+diag <- kriging_rss_joint(z_eur, z_afr, R_eur, R_afr, n1 = 193593, n2 = 60760)
+diag$plot   # inspect; red points = candidate mismatches
+
+# Remove flagged SNPs
+bad_snps <- diag$conditional_dist$logLR_joint > 2 &
+            abs(diag$conditional_dist$z_std_diff) > 4
+clean_idx <- which(!bad_snps[seq_along(z_eur)])  # ancestry-1 positions
+```
+
+---
 
 ## Runtime and reproducibility notes
 
