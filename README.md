@@ -121,6 +121,13 @@ clean_idx <- which(!bad_snps[seq_along(z_eur)])
 
 ---
 
+## Analysis code
+
+Simulation and real-data analysis scripts accompanying the manuscript are available at:
+[https://github.com/gchen4422/INFUSE_analysis](https://github.com/gchen4422/INFUSE_analysis)
+
+---
+
 ## Runtime and reproducibility notes
 
 INFUSE may rely on numerical linear algebra routines that use multi-threaded BLAS, LAPACK, or OpenMP backends. On shared computing environments, such as HPC clusters, uncontrolled multi-threading can lead to CPU oversubscription, unstable runtime, and small numerical differences across runs.
