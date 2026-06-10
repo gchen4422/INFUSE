@@ -74,7 +74,7 @@ The companion website documents the INFUSE methodology, installation, usage, and
 
 If you use INFUSE in your research, please cite:
 
-> Chen G, et al. INFUSE: INtegrating Functional annotations into mUlti-ancestry fine-mapping via Sum of single Effect model. *In preparation*.
+> Chen G, et al. INFUSE improves multi-ancestry fine-mapping through high-dimensional functional annotation integration and robust LD discrepancy detection. *In preparation*.
 
 ---
 
