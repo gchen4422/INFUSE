@@ -8,8 +8,11 @@
 
 INFUSE is an R package for multi-ancestry GWAS fine-mapping using summary statistics. Two key features distinguish it from existing methods:
 
-- **Functional annotation integration.** Per-SNP causal priors are learned from sparse principal components of a high-dimensional annotation matrix (e.g., BaselineLF v2.2), enabling signal-specific priors across hundreds of correlated features.
-- **Joint LD-discrepancy test (`kriging_rss_joint`).** A novel diagnostic that simultaneously flags LD mismatches and allele flips across both ancestries before fine-mapping, with higher sensitivity than single-ancestry approaches.
+**Functional annotation integration.** INFUSE learns SNP-level causal priors from sparse principal components of high-dimensional functional annotation matrices, such as BaselineLF v2.2. This enables signal-specific prior modeling across hundreds of correlated genomic features while reducing overfitting and improving interpretability.
+
+**Joint LD-discrepancy detection.** INFUSE includes a multi-ancestry diagnostic that jointly detects LD mismatches and allele flips across ancestries before fine-mapping. Compared with applying single-ancestry diagnostics separately, this joint test improves sensitivity while preserving false discovery control.
+
+Simulation and real-data analysis scripts accompanying the manuscript are available at [INFUSE_analysis](https://github.com/gchen4422/INFUSE_analysis), and the detailed tutorial of INFUSE is at [gchen4422.github.io/INFUSE](https://gchen4422.github.io/INFUSE/).
 
 ## Installation
 
@@ -179,4 +182,10 @@ NUMEXPR_NUM_THREADS=1
 ```
 
 These settings are especially useful when running many loci in parallel, where each job should typically use a single computational thread unless the user explicitly allocates additional CPUs per task.
+
+## Citation
+
+If you use INFUSE in your research, please cite:
+
+> Chen G, et al. INFUSE improves multi-ancestry fine-mapping through high-dimensional functional annotation integration and robust LD discrepancy detection. *In preparation*.
 
