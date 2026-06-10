@@ -8,9 +8,11 @@
 
 INFUSE is an R package for multi-ancestry GWAS fine-mapping using summary statistics. Two key features distinguish it from existing methods:
 
-- **Functional annotation integration.** INFUSE learns SNP-level causal priors from sparse principal components of high-dimensional functional annotation matrices, such as BaselineLF v2.2. This enables signal-specific prior modeling across hundreds of correlated genomic features while reducing overfitting and improving interpretability.
+**Functional annotation integration.** INFUSE learns SNP-level causal priors from sparse principal components of high-dimensional functional annotation matrices, such as BaselineLF v2.2. This enables signal-specific prior modeling across hundreds of correlated genomic features while reducing overfitting and improving interpretability.
 
-- **Joint LD-discrepancy detection.** INFUSE includes a multi-ancestry diagnostic that jointly detects LD mismatches and allele flips across ancestries before fine-mapping. Compared with applying single-ancestry diagnostics separately, this joint test improves sensitivity while preserving false discovery control.
+**Joint LD-discrepancy detection.** INFUSE includes a multi-ancestry diagnostic that jointly detects LD mismatches and allele flips across ancestries before fine-mapping. Compared with applying single-ancestry diagnostics separately, this joint test improves sensitivity while preserving false discovery control.
+
+Simulation and real-data analysis scripts accompanying the manuscript are available at [https://github.com/gchen4422/INFUSE_analysis](https://github.com/gchen4422/INFUSE_analysis) and [https://gchen4422.github.io/INFUSE/](https://gchen4422.github.io/INFUSE/).
 
 ## Installation
 
@@ -118,13 +120,6 @@ bad_snps <- diag$conditional_dist$logLR_joint > 2 &
             abs(diag$conditional_dist$z_std_diff) > 4
 clean_idx <- which(!bad_snps[seq_along(z_eur)])
 ```
-
----
-
-## Analysis code
-
-Simulation and real-data analysis scripts accompanying the manuscript are available at:
-[https://github.com/gchen4422/INFUSE_analysis](https://github.com/gchen4422/INFUSE_analysis)
 
 ---
 
