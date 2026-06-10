@@ -12,7 +12,7 @@ INFUSE is an R package for multi-ancestry GWAS fine-mapping using summary statis
 
 **Joint LD-discrepancy detection.** INFUSE includes a multi-ancestry diagnostic that jointly detects LD mismatches and allele flips across ancestries before fine-mapping. Compared with applying single-ancestry diagnostics separately, this joint test improves sensitivity while preserving false discovery control.
 
-Simulation and real-data analysis scripts accompanying the manuscript are available at [https://github.com/gchen4422/INFUSE_analysis](https://github.com/gchen4422/INFUSE_analysis) and the detailed tutorial of INFUSE is at [https://gchen4422.github.io/INFUSE/](https://gchen4422.github.io/INFUSE/).
+Simulation and real-data analysis scripts accompanying the manuscript are available at [INFUSE_analysis](https://github.com/gchen4422/INFUSE_analysis), and the detailed tutorial of INFUSE is at [gchen4422.github.io/INFUSE](https://gchen4422.github.io/INFUSE/).
 
 ## Installation
 
