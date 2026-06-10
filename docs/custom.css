@@ -1,0 +1,6 @@
+pre, pre.r, pre code {
+  overflow-x: auto !important;
+  white-space: pre !important;
+  word-wrap: normal !important;
+  word-break: normal !important;
+}

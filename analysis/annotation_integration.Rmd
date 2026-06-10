@@ -1,0 +1,185 @@
+---
+title: "Functional Annotation Integration"
+author: "Guangxin Chen"
+date: "2026-04-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Integrating Functional Annotations with INFUSE
+
+A key feature of INFUSE is its ability to incorporate functional genomic annotations to construct biologically informed prior probabilities for each candidate variant. This page describes how to prepare annotation data, which annotation types are most informative, and how the two annotation methods (`mlk` and `glm`) work internally.
+
+---
+
+## 1. Why Use Functional Annotations?
+
+In a typical GWAS locus, many SNPs are in strong LD with the true causal variant, making statistical fine-mapping alone insufficient to resolve the causal signal. Functional annotations provide orthogonal information: a variant in an active enhancer of the relevant tissue is *a priori* more likely to be causal than a variant in a gene desert.
+
+By incorporating annotation-derived priors, INFUSE can:
+
+- **Improve resolution** — shrink credible sets from tens of variants to a handful
+- **Increase interpretability** — prioritize variants with mechanistic support
+- **Boost cross-ancestry consistency** — biologically active regions are often shared across populations, so annotation-informed priors help align signals across ancestries
+
+---
+
+## 2. Annotation Data Sources
+
+INFUSE is designed to accommodate large-scale, correlated annotation resources. We recommend the **BaselineLF2.2 annotation set** from PolyFun ([Weissbrod et al., 2022](https://www.nature.com/articles/s41588-020-00735-5)), which aggregates 187 annotations spanning:
+
+| Annotation Type | Example Sources |
+|:---|:---|
+| Coding regions and conservation | UCSC Coding, Conserved (LindbladToh), PhyloP |
+| Regulatory elements | CTCF binding (Hoffman), Transcription (Hoffman), Human promoters (Villar) |
+| Chromatin state | Roadmap Epigenomics ([Roadmap Epigenomics Consortium, 2015](https://doi.org/10.1038/nature14248)) |
+| Open chromatin / TF binding | ENCODE ([ENCODE Project Consortium, 2012](https://doi.org/10.1038/nature11247)) |
+| Background selection | Background selection statistic |
+| CpG content | CpG content in 50 kb window |
+| Gene regulation | GTEx QTL annotations, such as MaxCPP |
+
+In the example dataset, the BaselineLF annotation matrix has **1,432 SNPs × 187 features**, with both `_lowfreq` and `_common` variants of each annotation to capture allele-frequency-stratified enrichment.
+
+We recommend selecting annotations relevant to the **target tissue or cell type** of the trait being studied.
+
+---
+
+## 3. Preparing the Annotation Matrix
+
+The `annot` argument to `infuse_core()` must be a numeric matrix with:
+
+- One **row per SNP**, in the same order as `summary_stat_sd_list`
+- One **column per annotation feature**
+- Values either binary (0/1) or continuous (e.g., conservation score, CpG fraction)
+
+In the example dataset, `annot_file_all` is already aligned to `summary_stat_sd_list`:
+
+```r
+dim(annot_file_all)
+# [1] 1432  187
+
+colnames(annot_file_all)[1:10]
+#  [1] "Coding_UCSC_lowfreq"                        "Coding_UCSC_common"
+#  [3] "Coding_UCSC.flanking.500_lowfreq"           "Coding_UCSC.flanking.500_common"
+#  [5] "Conserved_LindbladToh_lowfreq"              "Conserved_LindbladToh_common"
+#  [7] "Conserved_LindbladToh.flanking.500_lowfreq" "Conserved_LindbladToh.flanking.500_common"
+#  [9] "CTCF_Hoffman_lowfreq"                       "CTCF_Hoffman_common"
+
+# Pass to infuse_core() as a matrix
+annot <- as.matrix(annot_file_all)
+```
+
+For a custom annotation matrix, ensure SNP ordering matches `summary_stat_sd_list`:
+
+```r
+library(data.table)
+annot_raw <- fread("snp_annotations.txt.gz")
+
+annot_mat <- as.matrix(annot_raw[, -"SNP", with = FALSE])
+rownames(annot_mat) <- annot_raw$SNP
+
+# Align to SNPs in the locus
+snps_in_locus <- summary_stat_sd_list$EUR$SNP
+annot_mat <- annot_mat[snps_in_locus, ]
+```
+
+> **Tip:** Binary annotations (e.g., overlapping an enhancer peak: yes/no) and continuous annotations (e.g., conservation score) can be combined in the same matrix. INFUSE handles mixed annotation types internally.
+
+---
+
+## 4. Statistical Model for Annotation-Informed Priors
+
+INFUSE parameterizes the prior causal probability for SNP $j$ under the $\ell$-th single effect using a softmax over annotation features (see [Statistical Framework](index.html)):
+
+$$\pi_{\ell j} = \frac{\exp(\mathbf{A}_j^T \mathbf{w}_\ell)}{\displaystyle\sum_{j'=1}^{m} \exp(\mathbf{A}_{j'}^T \mathbf{w}_\ell)}$$
+
+where $\mathbf{w}_\ell \in \mathbb{R}^d$ is a **per-effect** annotation enrichment weight vector — each of the $L$ causal signals receives its own weights, allowing different effects at the same locus to be driven by distinct annotation profiles. The same weight vector is shared across ancestries.
+
+When annotations are high-dimensional or correlated, INFUSE first reduces dimensionality via sparse PCA before estimating $\mathbf{w}_\ell$.
+
+---
+
+## 5. Annotation Methods
+
+### 5.1 Method `mlk` (Sparse PCA, recommended)
+
+The `mlk` method applies **sparse PCA** (via `elasticnet::spca()`) to the annotation matrix $\mathbf{A}$ to obtain a low-dimensional representation when annotations are high-dimensional:
+
+$$\mathbf{A} = \mathbf{Z} \mathbf{V}^T$$
+
+where $\mathbf{Z} \in \mathbb{R}^{m \times k}$ contains the top $k$ sparse principal components and $\mathbf{V} \in \mathbb{R}^{d \times k}$ is the sparse loading matrix. The prior is then re-expressed in the sparse PC space:
+
+$$\pi_{\ell j} = \frac{\exp(\mathbf{Z}_j^T \mathbf{w}_\ell)}{\displaystyle\sum_{j'=1}^{m} \exp(\mathbf{Z}_{j'}^T \mathbf{w}_\ell)}$$
+
+This dimensionality reduction:
+
+- **Removes collinearity** among correlated annotations
+- **Performs implicit variable selection** — each sparse PC captures a small subset of biologically coherent features
+- **Prevents overfitting** — $k \ll d$ reduces the number of parameters to estimate
+
+The two tuning parameters — number of retained components $k$ and sparsity level (non-zero loadings per component) — are selected automatically via a **modified BIC** that balances model fit against complexity. When the annotation matrix has fewer than 15 features, sparse PCA is skipped and annotation weights are estimated directly by maximizing the joint likelihood.
+
+```r
+result <- infuse_core(
+  R_mat_list                 = R_mat_list,
+  summary_stat_list          = summary_stat_sd_list,
+  L                          = 10,
+  ancestry_weight            = ancestry_weight,
+  optim_method               = "optim",
+  estimate_residual_variance = FALSE,
+  max_iter                   = 100,
+  annot                      = as.matrix(annot_file_all),
+  annot_method               = "mlk"   # default and recommended
+)
+```
+
+### 5.2 Method `glm` (Generalized Linear Model)
+
+The `glm` method estimates annotation weights by regressing annotation features against empirical PIPs from a preliminary annotation-free pass. This method is **not recommended** for typical use — it is included mainly for benchmarking against `mlk`.
+
+```r
+result_glm <- infuse_core(
+  R_mat_list                 = R_mat_list,
+  summary_stat_list          = summary_stat_sd_list,
+  L                          = 10,
+  ancestry_weight            = ancestry_weight,
+  annot                      = as.matrix(annot_file_all),
+  annot_method               = "glm"
+)
+```
+
+---
+
+## 6. Interpreting Annotation Weights
+
+INFUSE reports the top-ranked annotation features for each causal signal during model fitting. In the example dataset (chromosome 1, ~7.9–9.5 Mb), the most enriched annotations for the primary signal (L=1) are:
+
+```
+CpG_Content_50kb_lowfreq                   11.578
+Backgrd_Selection_Stat_common               3.832
+Human_Promoter_Villar_common                2.228
+Human_Promoter_Villar_ExAC.flanking.500     2.064
+Coding_UCSC_common                          1.724
+Transcr_Hoffman_common                      1.584
+```
+
+Positive weights indicate annotations enriched among causal variants; larger magnitudes indicate stronger influence on the prior. Here, the strong CpG content enrichment and promoter annotations suggest the causal signal is located in a CpG-dense regulatory region, consistent with a transcriptional regulatory mechanism.
+
+Because INFUSE estimates a **separate weight vector $\mathbf{w}_\ell$ per effect**, different causal signals at the same locus can be driven by different annotation profiles. For example, one signal may be enriched in coding annotations while another aligns with regulatory marks.
+
+---
+
+## 7. Running Without Annotations
+
+If no annotation data is available, omit `annot` (or set it to `NULL`). INFUSE will assign a uniform prior across all SNPs, equivalent to MESuSiE behavior:
+
+```r
+result_unannotated <- infuse_core(
+  R_mat_list                 = R_mat_list,
+  summary_stat_list          = summary_stat_sd_list,
+  L                          = 10,
+  ancestry_weight            = ancestry_weight,
+  annot                      = NULL
+)
+```

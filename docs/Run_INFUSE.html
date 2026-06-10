@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Guangxin Chen" />
+
+<meta name="date" content="2026-04-10" />
+
+<title>Running INFUSE</title>
+
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="custom.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">INFUSE</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="installation.html">Installation</a>
+</li>
+<li>
+  <a href="Data_prepare.html">Data Preparation</a>
+</li>
+<li>
+  <a href="Run_INFUSE.html">Run INFUSE</a>
+</li>
+<li>
+  <a href="annotation_integration.html">Annotation Integration</a>
+</li>
+<li>
+  <a href="real_data_example.html">Real Data Example</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Running INFUSE</h1>
+<h4 class="author">Guangxin Chen</h4>
+<h4 class="date">2026-04-10</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2026-05-20
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 1
+</p>
+<p>
+<strong>Knit directory:</strong> <code>INFUSE_website/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.2). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguncommittedchanges"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The R Markdown is untracked by Git. To know which version of the R
+Markdown file created these results, you’ll want to first commit it to
+the Git repo. If you’re still working on the analysis, you can ignore
+this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the
+global environment can affect the analysis in your R Markdown file in
+unknown ways. For reproduciblity it’s best to always run the code in an
+empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20260410code">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Seed:</strong>
+<code>set.seed(20260410)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20260410code"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20260410)</code> was run prior to running
+the code in the R Markdown file. Setting a seed ensures that any results
+that rely on randomness, e.g. subsampling or permutations, are
+reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Session information:</strong>
+recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package
+versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be
+confident that you successfully produced the results during this
+run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr
+project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongf46ac6d">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong> f46ac6d
+</a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongf46ac6d"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version f46ac6d.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .claude/
+    Ignored:    analysis/INFUSE.png
+
+Untracked files:
+    Untracked:  MAFPC_method_guangxin_revision_4.docx
+    Untracked:  analysis/Data_prepare.Rmd
+    Untracked:  analysis/Run_INFUSE.Rmd
+    Untracked:  analysis/annotation_integration.Rmd
+    Untracked:  analysis/custom.css
+    Untracked:  analysis/installation.Rmd
+    Untracked:  analysis/real_data_example.Rmd
+    Untracked:  build_site.R
+    Untracked:  code/data_prep_utils.R
+    Untracked:  code/plot_utils.R
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+<p>
+There are no past versions. Publish this analysis with
+<code>wflow_publish()</code> to start tracking its development.
+</p>
+<hr>
+</div>
+</div>
+</div>
+<div id="running-infuse_core" class="section level1">
+<h1>Running <code>infuse_core()</code></h1>
+<p>The primary function in INFUSE is <code>infuse_core()</code>. This
+page describes the required and optional inputs, how to format your
+data, and how to interpret the output.</p>
+<hr />
+<div id="input-data-format" class="section level2">
+<h2>1. Input Data Format</h2>
+<p>The example dataset is bundled with the package and can be loaded
+directly:</p>
+<pre class="r"><code>library(INFUSE)
+data(infuse_example)
+
+R_mat_list           &lt;- infuse_example$R_mat_list
+summary_stat_sd_list &lt;- infuse_example$summary_stat_sd_list
+annot_file_all       &lt;- infuse_example$annot_file_all
+ancestry_weight      &lt;- infuse_example$ancestry_weight</code></pre>
+<div id="ld-matrices-r_mat_list" class="section level3">
+<h3>1.1 LD Matrices (<code>R_mat_list</code>)</h3>
+<p><code>R_mat_list</code> is a <strong>named list</strong> of
+ancestry-specific LD correlation matrices. Each matrix must be:</p>
+<ul>
+<li>Square and symmetric (<span class="math inline">\(p \times
+p\)</span>)</li>
+<li>Row names and column names set to SNP identifiers (rsID or
+<code>chr:pos</code>)</li>
+<li>Contain values in <span class="math inline">\([-1, 1]\)</span>
+(correlation, not covariance)</li>
+</ul>
+<p>In the example dataset, <code>R_mat_list</code> contains two
+ancestries (EUR and AFR), each with a <span class="math inline">\(1432
+\times 1432\)</span> LD matrix:</p>
+<pre class="r"><code>lapply(R_mat_list, dim)
+# $EUR
+# [1] 1432 1432
+#
+# $AFR
+# [1] 1432 1432</code></pre>
+<blockquote>
+<p><strong>Important:</strong> SNP ordering within each LD matrix must
+exactly match the ordering of rows in the corresponding summary
+statistics data frame.</p>
+</blockquote>
+</div>
+<div id="summary-statistics-summary_stat_sd_list"
+class="section level3">
+<h3>1.2 Summary Statistics (<code>summary_stat_sd_list</code>)</h3>
+<p><code>summary_stat_sd_list</code> is a <strong>named list</strong> of
+data frames, one per ancestry. Each data frame contains the following
+columns:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Column</th>
+<th align="left">Required</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>SNP</code></td>
+<td align="left">Yes</td>
+<td align="left">Variant identifier (rsID or <code>chr:pos</code>). Must
+match LD matrix row/column names.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Beta</code></td>
+<td align="left">Yes</td>
+<td align="left">Effect size estimate (log-OR for binary, linear
+coefficient for quantitative traits).</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>Se</code></td>
+<td align="left">Yes</td>
+<td align="left">Standard error of the effect size.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>Z</code></td>
+<td align="left">Recommended</td>
+<td align="left">Z-score (<span class="math inline">\(\text{Beta} /
+\text{Se}\)</span>).</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>CHR</code></td>
+<td align="left">Recommended</td>
+<td align="left">Chromosome number.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>POS</code></td>
+<td align="left">Recommended</td>
+<td align="left">Base pair position (GRCh38 for this example data).</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>ALT</code> / <code>REF</code></td>
+<td align="left">Recommended</td>
+<td align="left">Effect and reference alleles.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>MAF</code></td>
+<td align="left">Optional</td>
+<td align="left">Minor allele frequency in the study sample.</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>N</code></td>
+<td align="left">Optional</td>
+<td align="left">Per-variant sample size.</td>
+</tr>
+<tr class="even">
+<td align="left"><code>INFO</code></td>
+<td align="left">Optional</td>
+<td align="left">Imputation quality score.</td>
+</tr>
+</tbody>
+</table>
+<p>In the example dataset, each ancestry data frame has 1,432 SNPs on
+chromosome 1 (positions ~7.9–9.5 Mb) with 13 columns:</p>
+<pre class="r"><code>lapply(summary_stat_sd_list, colnames)
+# $EUR
+#  [1] &quot;SNP&quot;  &quot;CHR&quot;  &quot;POS&quot;  &quot;PVAL&quot; &quot;ALT&quot;  &quot;REF&quot;  &quot;N&quot;    &quot;Z&quot;    &quot;Beta&quot; &quot;Se&quot;   &quot;INFO&quot; &quot;MAF&quot;  &quot;CHR_POS&quot;
+#
+# $AFR
+#  [1] &quot;SNP&quot;  &quot;CHR&quot;  &quot;POS&quot;  &quot;PVAL&quot; &quot;ALT&quot;  &quot;REF&quot;  &quot;N&quot;    &quot;Z&quot;    &quot;Beta&quot; &quot;Se&quot;   &quot;INFO&quot; &quot;MAF&quot;  &quot;CHR_POS&quot;
+
+lapply(summary_stat_sd_list, function(x) head(x, 3))
+# $EUR
+#         SNP CHR POS PVAL ALT REF N Z Beta Se INFO MAF CHR_POS
+# 1: rs9434555 1 7921393 0.6696394 C T 193593 -0.4266430 -0.00140069 0.003283050 1 0.368389 1_7921393
+# 2:  rs226480 1 7921592 0.3748737 T C 191483 -0.8873812 -0.00886010 0.009984548 1 0.973708 1_7921592
+# 3:  rs161827 1 7921974 0.4273739 T C 193597 -0.7936935 -0.00813568 0.010250406 1 0.975426 1_7921974
+#
+# $AFR
+#         SNP CHR POS PVAL ALT REF N Z Beta Se INFO MAF CHR_POS
+# 1: rs9434555 1 7921393 0.9527928 C T 60760 -0.05920003 -0.000347323 0.00586694 1 0.672251 1_7921393
+# 2:  rs226480 1 7921592 0.4111331 T C 61046 -0.82190129 -0.004663320 0.00567382 1 0.393163 1_7921592
+# 3:  rs161827 1 7921974 0.8207533 T C 61158  0.22657622  0.001453670 0.00641581 1 0.760514 1_7921974</code></pre>
+<p>Note that EUR has ~193,593 and AFR has ~60,760 samples per variant,
+reflecting typical multi-ancestry GWAS sample size differences.</p>
+</div>
+<div id="annotation-matrix-annot" class="section level3">
+<h3>1.3 Annotation Matrix (<code>annot</code>)</h3>
+<p><code>annot</code> is a SNP <span
+class="math inline">\(\times\)</span> feature matrix of functional
+annotation values passed as <code>as.matrix()</code>. Rows correspond to
+SNPs (in the same order as <code>summary_stat_sd_list</code>), columns
+are annotation features.</p>
+<p>In the example dataset, <code>annot_file_all</code> has 1,432 SNPs
+and 186 annotation features drawn from BaselineLF reference from PolyFun
+(<a href="https://www.nature.com/articles/s41588-020-00735-5">Weissbrod
+et al., 2022</a>).</p>
+<pre class="r"><code>dim(annot_file_all)
+# [1] 1432  186
+
+colnames(annot_file_all)[1:10]
+#  [1] &quot;Coding_UCSC_lowfreq&quot;                        &quot;Coding_UCSC_common&quot;
+#  [3] &quot;Coding_UCSC.flanking.500_lowfreq&quot;           &quot;Coding_UCSC.flanking.500_common&quot;
+#  [5] &quot;Conserved_LindbladToh_lowfreq&quot;              &quot;Conserved_LindbladToh_common&quot;
+#  [7] &quot;Conserved_LindbladToh.flanking.500_lowfreq&quot; &quot;Conserved_LindbladToh.flanking.500_common&quot;
+#  [9] &quot;CTCF_Hoffman_lowfreq&quot;                       &quot;CTCF_Hoffman_common&quot;</code></pre>
+<p>If <code>annot</code> is <code>NULL</code>, INFUSE falls back to a
+uniform prior (equivalent to MESuSiE behavior).</p>
+</div>
+<div id="ancestry-weights-ancestry_weight" class="section level3">
+<h3>1.4 Ancestry Weights (<code>ancestry_weight</code>)</h3>
+<p><code>ancestry_weight</code> is a numeric vector that controls the
+relative contribution of ancestry-specific versus shared causal signals
+in the model. The vector has three elements corresponding to the weight
+on EUR-specific, AFR-specific, and shared signals respectively, and
+should sum to 1.</p>
+<p>The ratio of ancestry-specific to shared weights governs how strongly
+the model favors ancestry-specific causal SNP detection over shared
+signals. In the example dataset, we set a 3:1 ratio of ancestry-specific
+to shared (i.e., <code>c(3, 3, 1)</code> normalized), encouraging
+detection of ancestry-specific causal variants:</p>
+<pre class="r"><code>print(ancestry_weight)
+# [1] 0.4285714 0.4285714 0.1428571   # = c(3, 3, 1) / sum(c(3, 3, 1))</code></pre>
+<p>The table below summarizes common configurations:</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Scenario</th>
+<th align="left">Setting</th>
+<th align="left">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Pure shared signal</td>
+<td align="left"><code>c(0, 0, 1)</code></td>
+<td align="left">All weight on shared component; no ancestry-specific
+detection</td>
+</tr>
+<tr class="even">
+<td align="left">Balanced</td>
+<td align="left"><code>c(1, 1, 1) / 3</code></td>
+<td align="left">Equal weight on EUR-specific, AFR-specific, and
+shared</td>
+</tr>
+<tr class="odd">
+<td align="left">Encourage ancestry-specific (default)</td>
+<td align="left"><code>c(3, 3, 1) / sum(c(3, 3, 1))</code></td>
+<td align="left">3:1 ratio favoring ancestry-specific signals</td>
+</tr>
+<tr class="even">
+<td align="left">Strong ancestry-specific</td>
+<td align="left"><code>c(5, 5, 1) / sum(c(5, 5, 1))</code></td>
+<td align="left">5:1 ratio; use when ancestry-specific effects are
+expected to dominate</td>
+</tr>
+</tbody>
+</table>
+<p>If your GWAS locus is known to harbor population-specific signals
+(e.g., driven by ancestry-specific LD patterns or allele frequencies),
+increase the ancestry-specific weights. If you expect a single shared
+causal variant across all ancestries, reduce the ancestry-specific
+weights or use <code>c(0, 0, 1)</code>.</p>
+<hr />
+</div>
+</div>
+<div id="running-infuse_core-1" class="section level2">
+<h2>2. Running <code>infuse_core()</code></h2>
+<pre class="r"><code>library(INFUSE)
+
+result &lt;- infuse_core(
+  R_mat_list                 = R_mat_list,
+  summary_stat_list          = summary_stat_sd_list,
+  L                          = 10,
+  residual_variance          = NULL,
+  ancestry_weight            = ancestry_weight,
+  optim_method               = &quot;optim&quot;,
+  estimate_residual_variance = FALSE,
+  max_iter                   = 100,
+  annot                      = as.matrix(annot_file_all),
+  annot_method               = &quot;mlk&quot;
+)
+# Total time used for the analysis: ~7 mins</code></pre>
+<div id="parameter-reference" class="section level3">
+<h3>Parameter Reference</h3>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Parameter</th>
+<th align="left">Default</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>R_mat_list</code></td>
+<td align="left">—</td>
+<td align="left">Named list of LD matrices (required)</td>
+</tr>
+<tr class="even">
+<td align="left"><code>summary_stat_list</code></td>
+<td align="left">—</td>
+<td align="left">Named list of summary stat data frames (required)</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>annot</code></td>
+<td align="left">—</td>
+<td align="left">SNP <span class="math inline">\(\times\)</span> feature
+matrix of functional annotation values</td>
+</tr>
+<tr class="even">
+<td align="left"><code>L</code></td>
+<td align="left"><code>10</code></td>
+<td align="left">Maximum number of causal signals to model</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>residual_variance</code></td>
+<td align="left"><code>NULL</code></td>
+<td align="left">Fixed residual variance; <code>NULL</code> estimates
+from data</td>
+</tr>
+<tr class="even">
+<td align="left"><code>ancestry_weight</code></td>
+<td align="left"><code>NULL</code></td>
+<td align="left">Named numeric vector weighting each ancestry’s
+contribution</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>optim_method</code></td>
+<td align="left"><code>"optim"</code></td>
+<td align="left">Optimization algorithm: <code>"optim"</code> or
+<code>"L-BFGS-B"</code></td>
+</tr>
+<tr class="even">
+<td align="left"><code>estimate_residual_variance</code></td>
+<td align="left"><code>FALSE</code></td>
+<td align="left">Whether to estimate residual variance; set
+<code>FALSE</code> for summary statistics</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>max_iter</code></td>
+<td align="left"><code>100</code></td>
+<td align="left">Maximum ELBO optimization iterations</td>
+</tr>
+<tr class="even">
+<td align="left"><code>annot</code></td>
+<td align="left"><code>NULL</code></td>
+<td align="left">SNP × feature annotation matrix (pass as
+<code>as.matrix()</code>)</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>annot_method</code></td>
+<td align="left"><code>"mlk"</code></td>
+<td align="left">Annotation weight estimation method: <code>"mlk"</code>
+(sparse PCA) or <code>"glm"</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+</div>
+</div>
+<div id="output-interpretation" class="section level2">
+<h2>3. Output Interpretation</h2>
+<div id="posterior-inclusion-probabilities-pip" class="section level3">
+<h3>3.1 Posterior Inclusion Probabilities (<code>$pip</code>)</h3>
+<p>A numeric vector of length <span class="math inline">\(p\)</span>
+giving the posterior inclusion probability (PIP) for each SNP — the
+probability that the SNP is causal in at least one ancestry.</p>
+<p>A common discovery threshold is PIP <span class="math inline">\(&gt;
+0.5\)</span>. In the example dataset, one SNP exceeds this
+threshold:</p>
+<pre class="r"><code>head(result$pip, 10)
+#  [1] 0.0006983240 0.0007671212 0.0012176492 0.0006983240 0.0006983240
+#  [6] 0.0007382932 0.0006983240 0.0006983240 0.0007895883 0.0006983240
+
+# High-confidence causal candidate
+names(result$pip)[result$pip &gt; 0.5]
+# Potential causal SNPs with PIP &gt; 0.5:  rs301807</code></pre>
+</div>
+<div id="credible-sets-cs" class="section level3">
+<h3>3.2 Credible Sets (<code>$cs</code>)</h3>
+<p>A list containing 95% credible sets — groups of SNPs whose cumulative
+PIP exceeds 0.95 — along with purity statistics (minimum, mean, and
+median absolute pairwise LD correlation within each set).</p>
+<p>In the example dataset, one credible set is identified (L1)
+containing 4 SNPs at indices 916, 918, 922, and 927, with very high
+purity (minimum <span class="math inline">\(|r| = 0.991\)</span>):</p>
+<pre class="r"><code>result$cs
+# $cs
+# $cs$L1
+# [1] 916 918 922 927
+#
+# $purity
+#    min.abs.corr mean.abs.corr median.abs.corr
+# L1    0.9913705     0.9967612       0.9982714
+#
+# $coverage
+# [1] 0.9865202        # actual coverage (≥ requested 0.95)
+#
+# $requested_coverage
+# [1] 0.95</code></pre>
+<p><strong>Interpreting purity:</strong> All four SNPs in L1 have
+pairwise <span class="math inline">\(|r| &gt; 0.99\)</span>, indicating
+they are in near-perfect LD. This is a high-confidence, well-resolved
+credible set.</p>
+</div>
+<div id="single-effect-posteriors-alpha" class="section level3">
+<h3>3.3 Single-Effect Posteriors (<code>$alpha</code>)</h3>
+<p>An <span class="math inline">\(L \times p\)</span> matrix where
+<code>alpha[l, j]</code> is the posterior probability that the <span
+class="math inline">\(\ell\)</span>-th causal signal is driven by SNP
+<span class="math inline">\(j\)</span>. Rows sum to 1 within each effect
+<span class="math inline">\(\ell\)</span>.</p>
+<pre class="r"><code>dim(result$alpha)
+# [1]   10 1432   (L=10 effects x 1432 SNPs)</code></pre>
+</div>
+<div id="top-annotation-weights" class="section level3">
+<h3>3.4 Top Annotation Weights</h3>
+<p>During model fitting, INFUSE reports the top-ranked annotation
+features for each effect. For effect L=1 in the example, the most
+enriched annotations are:</p>
+<pre><code>CpG_Content_50kb_lowfreq                   11.578
+Backgrd_Selection_Stat_common               3.832
+Human_Promoter_Villar_common                2.228
+Human_Promoter_Villar_ExAC.flanking.500     2.064
+Coding_UCSC_common                          1.724
+Transcr_Hoffman_common                      1.584</code></pre>
+<p>These suggest the causal signal at this locus is enriched in
+CpG-dense regions and human promoter annotations, consistent with a
+regulatory mechanism.</p>
+<hr />
+</div>
+</div>
+<div id="tuning-parameters" class="section level2">
+<h2>4. Tuning Parameters</h2>
+<div id="l-number-of-effects" class="section level3">
+<h3>L (number of effects)</h3>
+<p>Setting <code>L</code> too low may miss multiple causal signals at a
+locus; setting it too high increases computation. For typical GWAS loci,
+<code>L = 10</code> is a safe default. If you expect a region to harbor
+only 1–2 signals, <code>L = 5</code> is sufficient.</p>
+</div>
+<div id="annotation-method" class="section level3">
+<h3>Annotation method</h3>
+<ul>
+<li><strong><code>mlk</code></strong>: Recommended. When the annotation
+matrix contains many features (&gt;15), this method applies sparse PCA
+to obtain a lower-dimensional representation before estimating
+annotation weights. Otherwise, it estimates the weights by directly
+maximizing the joint likelihood without sparse PCA.</li>
+<li><strong><code>glm</code></strong>: Not recommended; included mainly
+for benchmarking purposes.</li>
+</ul>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>
+Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.2.2 (2022-10-31)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Rocky Linux 8.10 (Green Obsidian)
+
+Matrix products: default
+BLAS/LAPACK: /apps/spack/negishi/apps/openblas/0.3.21-gcc-12.2.0-lzvicim/lib/libopenblas_zenp-r0.3.21.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] workflowr_1.7.2
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.1.1        compiler_4.2.2    pillar_1.9.0      bslib_0.8.0      
+ [5] later_1.3.2       git2r_0.36.2      jquerylib_0.1.4   tools_4.2.2      
+ [9] getPass_0.2-4     digest_0.6.37     jsonlite_2.0.0    evaluate_1.0.5   
+[13] lifecycle_1.0.5   tibble_3.2.1      pkgconfig_2.0.3   rlang_1.2.0      
+[17] cli_3.6.3         rstudioapi_0.14   yaml_2.3.10       xfun_0.48        
+[21] fastmap_1.2.0     httr_1.4.7        stringr_1.5.1     knitr_1.48       
+[25] fs_2.0.1          vctrs_0.6.5       sass_0.4.9        rprojroot_2.1.1  
+[29] glue_1.8.0        R6_2.6.1          processx_3.8.7    fansi_1.0.6      
+[33] rmarkdown_2.28    callr_3.7.6       magrittr_2.0.3    whisker_0.4      
+[37] ps_1.9.2          promises_1.3.0    htmltools_0.5.8.1 httpuv_1.6.6     
+[41] utf8_1.2.4        stringi_1.8.4     cachem_1.1.0     </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+---
+title: "Real Data Example"
+author: "Guangxin Chen"
+date: "2026-04-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+In this section, we demonstrate the performance of **INFUSE** using real-world loci associated with cardiometabolic and anthropometric traits from the *All of Us* dataset. Throughout this section, **EA** refers to **European Ancestry** and **AA** refers to **African Ancestry** participants in the *All of Us* Research Program. These examples illustrate two complementary advantages of INFUSE:
+
+- When the primary signal is **shared across ancestries** (***SH2B3*** locus, DBP): INFUSE integrates functional annotations — including H3K27ac, H3K4me3, TFBS, and coding consequence — to confidently prioritize rs3184504 as a shared causal variant, even when power is reduced in AA due to low effect allele frequency (EAF = 0.07).
+- When the signal is **ancestry-specific** (***BDNF*** locus, BMI): INFUSE explicitly models ancestry-specific causal configurations and leverages regulatory annotations (DHS, TFBS, enhancer marks) to identify rs11030119 as a EUR-specific signal that MESuSiE and Paintor fail to detect.
+
+## Setup
+
+```{r setup, message=FALSE, warning=FALSE}
+library(data.table)
+library(dplyr)
+library(patchwork)
+
+source(here::here("code/plot_utils.R"))
+
+res_dir   <- "/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/summary_res/"
+Gene_List <- fread("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/Annotation/Gencode_genelist/Gencode_GRCh38_Genes_UniqueList2025.txt", header = TRUE)
+```
+
+
+## Example 1: Putative Shared Signal at *SH2B3* (Locus 28)
+
+rs3184504 is a putative shared causal variant for diastolic blood pressure (DBP) mapped to *SH2B3* on chromosome 12. It is a missense variant (Arg262Trp) experimentally validated as causal for blood pressure elevation and renal damage in mouse models, and overlaps multiple regulatory annotations including H3K27ac (active enhancer), H3K4me3 (active promoter), and TFBS marks.
+
+### Processing Locus 28 (rs3184504)
+
+We extract summary statistics and ancestry-specific LD matrices (EUR and AFR), compute LD $R^2$ relative to rs3184504, and categorize SNPs by PIP threshold across four methods — **Paintor**, **Paintor+annot**, **INFUSE**, and **MESuSiE** — to assess how each method classifies shared versus ancestry-specific signals.
+
+```{r locus28, message=FALSE, warning=FALSE, fig.height=9, fig.width=8}
+LD_BLOCK <- 28; trait <- "DBP"; lead_SNP <- "rs3184504"
+load(paste0(res_dir, "res_bp_pca_bic_modified_llk_updated.RData"))
+
+wrk_dir  <- paste0("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/results_", trait, "/")
+data_dir <- paste0(wrk_dir, "summary_data/")
+
+EU_cov <- as.matrix(fread(paste0(data_dir, "eur_loci_", LD_BLOCK, ".ld")))
+BB_cov <- as.matrix(fread(paste0(data_dir, "afr_loci_", LD_BLOCK, ".ld")))
+
+candidate_region <- res_all %>%
+  filter(Region == LD_BLOCK) %>%
+  mutate(
+    r2_EUR = get_ld_vec(EU_cov, lead_SNP)[as.character(SNP)],
+    r2_AFR = get_ld_vec(BB_cov, lead_SNP)[as.character(SNP)],
+    r2_EUR = ifelse(is.na(r2_EUR), 0, r2_EUR),
+    r2_AFR = ifelse(is.na(r2_AFR), 0, r2_AFR),
+    POS    = as.numeric(POS)
+  ) %>%
+  assign_cats()
+
+# GWAS panels
+p_EUR <- gwas_plot_fun(make_gwas_data(candidate_region, "r2_EUR", "zscore_WB", lead_SNP),
+                       "All of Us EA", "-log10(P-value)", -log10(5e-8)) + drop_guides + theme(legend.position = "none")
+p_AFR <- gwas_plot_fun(make_gwas_data(candidate_region, "r2_AFR", "zscore_BB", lead_SNP),
+                       "All of Us BA", "-log10(P-value)", -log10(5e-8)) + drop_guides + theme(legend.position = "none")
+
+# Fine-mapping panels
+p_Paintor       <- finemap_plot_fun(make_plot_data(candidate_region, "r2_EUR", "Paintor_PIP",                "Paintor_cat",       lead_SNP), "Paintor",       "PIP", 0.5) + drop_guides + theme(legend.position = "none")
+p_Paintor_annot <- finemap_plot_fun(make_plot_data(candidate_region, "r2_EUR", "Paintor_PIP_all",            "Paintor_annot_cat", lead_SNP), "Paintor+annot", "PIP", 0.5) + drop_guides + theme(legend.position = "none")
+p_MESuSiE       <- finemap_plot_fun(make_plot_data(candidate_region, "r2_EUR", "MESuSiE_PIP_Either",         "MESuSiE_cat",       lead_SNP), "MESuSiE",       "PIP", 0.5) + drop_guides + theme(legend.position = "none")
+p_INFUSE        <- finemap_plot_fun(make_plot_data(candidate_region, "r2_EUR", "MESuSiE_PIP_Either_all_mlk", "INFUSE_cat",        lead_SNP), "INFUSE",        "PIP", 0.5)
+
+# Gene track
+plot.range <- range(candidate_region$POS)
+p_gene <- gene_range_plot_fun(
+  Gene_List %>% filter(Chrom == paste0("chr", unique(candidate_region$CHR)),
+                       Start < max(candidate_region$POS), End > min(candidate_region$POS),
+                       Coding == "proteincoding", !is.na(cdsLength), GeneLength > 15000),
+  plot.range)
+
+# Annotation tracks (Coding and H3K27ac)
+p_coding  <- plot_annotation_highlight(candidate_region, "Coding_UCSC_common",   lead_SNP, "Coding",  "#0072B2") + track_theme
+p_H3K27ac <- plot_annotation_highlight(candidate_region, "H3K27ac_Hnisz_common", lead_SNP, "H3K27ac", "#FFB6C1") + track_theme
+
+# Combined figure
+(p_EUR/p_coding/p_H3K27ac/p_Paintor/p_INFUSE/p_gene       + plot_layout(heights = c(1, 0.1, 0.1, 1, 1, 1)) |
+ p_AFR/p_coding/p_H3K27ac/p_Paintor_annot/p_MESuSiE/p_gene + plot_layout(heights = c(1, 0.1, 0.1, 1, 1, 1))) +
+  plot_layout(guides = "collect") & theme(legend.position = "bottom")
+```
+
+
+### Result Interpretation
+
+- **Top Row (GWAS):** Association signals for **All of Us EA** (left) and **AA** (right), colored by $R^2$ with rs3184504. Functional tracks show **Coding** and **H3K27ac** annotations. Dashed line: genome-wide significance ($p < 5 \times 10^{-8}$).
+- **Middle Rows (Fine-mapping):** PIP comparison across **Paintor**, **Paintor+annot**, **INFUSE**, and **MESuSiE**. Only INFUSE identifies rs3184504 as a high-confidence causal candidate (PIP $> 0.5$).
+- **Bottom Row (Gene Context):** Fine-mapped signals localize to *SH2B3* on chr12: 111–113 Mb.
+
+**Key Takeaway:** By integrating functional annotations, INFUSE confidently prioritizes rs3184504 as a shared causal variant for DBP. MESuSiE, Paintor, and Paintor+annot all fail to identify a causal signal at this locus.
+
+
+
+## Example 2: Ancestry-Specific Signal at *BDNF* (Locus 126)
+
+rs11030119 is a putative EUR-specific causal variant for BMI mapped to an intronic region near *BDNF* on chromosome 11. Despite near-identical allele frequencies (EAF = 0.713 in EA vs. 0.711 in AA), effect sizes differ substantially (EA: $\hat{\beta} = -0.032$; AA: $\hat{\beta} = 0.004$), indicating an ancestry-specific signal. rs11030119 overlaps DHS, TFBS, and enhancer marks, and acts as an eQTL for *BDNF* — a key regulator of hypothalamic energy balance — across multiple tissues including adipose, artery, and nerve.
+
+### Processing Locus 126 (rs11030119)
+
+We extract summary statistics and ancestry-specific LD matrices (EUR and AFR), compute LD $R^2$ relative to rs11030119, and categorize SNPs by PIP threshold across **Paintor**, **Paintor+annot**, **INFUSE**, and **MESuSiE** to illustrate how INFUSE leverages functional annotations to detect EUR-specific signals that annotation-agnostic methods miss.
+
+```{r locus126, message=FALSE, warning=FALSE, fig.height=9, fig.width=8}
+LD_BLOCK <- 126; trait <- "BMI"; lead_SNP <- "rs11030119"
+load(paste0(res_dir, "res_bmi_pca_bic_modified_llk.RData"))
+
+wrk_dir  <- paste0("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/results_", trait, "/")
+data_dir <- paste0(wrk_dir, "summary_data/")
+
+EU_cov <- as.matrix(fread(paste0(data_dir, "eur_loci_", LD_BLOCK, ".ld")))
+BB_cov <- as.matrix(fread(paste0(data_dir, "afr_loci_", LD_BLOCK, ".ld")))
+
+candidate_region <- res_all %>%
+  filter(Region == LD_BLOCK) %>%
+  mutate(
+    r2_EUR = get_ld_vec(EU_cov, lead_SNP)[as.character(SNP)],
+    r2_AFR = get_ld_vec(BB_cov, lead_SNP)[as.character(SNP)],
+    r2_EUR = ifelse(is.na(r2_EUR), 0, r2_EUR),
+    r2_AFR = ifelse(is.na(r2_AFR), 0, r2_AFR),
+    POS    = as.numeric(POS)
+  ) %>%
+  assign_cats()
+
+# GWAS panels
+p_EUR <- gwas_plot_fun(make_gwas_data(candidate_region, "r2_EUR", "zscore_WB", lead_SNP),
+                       "All of Us EA", "-log10(P-value)", -log10(5e-8)) + drop_guides + theme(legend.position = "none")
+p_AFR <- gwas_plot_fun(make_gwas_data(candidate_region, "r2_AFR", "zscore_BB", lead_SNP),
+                       "All of Us BA", "-log10(P-value)", -log10(5e-8)) + drop_guides + theme(legend.position = "none")
+
+# Fine-mapping panels
+p_Paintor       <- finemap_plot_fun(make_plot_data(candidate_region, "r2_EUR", "Paintor_PIP",                "Paintor_cat",       lead_SNP), "Paintor",       "PIP", 0.5) + drop_guides + theme(legend.position = "none")
+p_Paintor_annot <- finemap_plot_fun(make_plot_data(candidate_region, "r2_EUR", "Paintor_PIP_all",            "Paintor_annot_cat", lead_SNP), "Paintor+annot", "PIP", 0.5) + drop_guides + theme(legend.position = "none")
+p_MESuSiE       <- finemap_plot_fun(make_plot_data(candidate_region, "r2_EUR", "MESuSiE_PIP_Either",         "MESuSiE_cat",       lead_SNP), "MESuSiE",       "PIP", 0.5) + drop_guides + theme(legend.position = "none")
+p_INFUSE        <- finemap_plot_fun(make_plot_data(candidate_region, "r2_EUR", "MESuSiE_PIP_Either_all_mlk", "INFUSE_cat",        lead_SNP), "INFUSE",        "PIP", 0.5)
+
+# Gene track
+plot.range <- range(candidate_region$POS)
+p_gene <- gene_range_plot_fun(
+  Gene_List %>% filter(Chrom == paste0("chr", unique(candidate_region$CHR)),
+                       Start < max(candidate_region$POS), End > min(candidate_region$POS),
+                       Coding == "proteincoding", !is.na(cdsLength), GeneLength > 15000),
+  plot.range)
+
+# Annotation tracks (DHS and TFBS)
+p_dhs  <- plot_annotation_highlight(candidate_region, "DHS_Trynka_common",   lead_SNP, "DHS",  "#0072B2") + track_theme
+p_tfbs <- plot_annotation_highlight(candidate_region, "TFBS_ENCODE_common",  lead_SNP, "TFBS", "#FFB6C1") + track_theme
+
+# Combined figure
+(p_EUR/p_dhs/p_tfbs/p_Paintor/p_INFUSE/p_gene       + plot_layout(heights = c(1, 0.1, 0.1, 1, 1, 1)) |
+ p_AFR/p_dhs/p_tfbs/p_Paintor_annot/p_MESuSiE/p_gene + plot_layout(heights = c(1, 0.1, 0.1, 1, 1, 1))) +
+  plot_layout(guides = "collect") & theme(legend.position = "bottom")
+```
+
+
+### Result Interpretation
+
+- **Top Row (GWAS):** Association signals for **All of Us EA** (left) and **AA** (right). rs11030119 is genome-wide significant in EA ($-\log_{10}(p) > 20$) but not in AA. Functional tracks show **DHS** and **TFBS** annotations.
+- **Middle Rows (Fine-mapping):** INFUSE and Paintor+annot both identify rs11030119 as a putative causal signal. MESuSiE fails to detect it; Paintor assigns only modest support (PIP = 0.30).
+- **Bottom Row (Gene Context):** Signals localize near *BDNF*, *LGR4*, *CCDC34*, and *KIF18A* on chr11: 26.8–28 Mb.
+
+**Key Takeaway:** rs11030119 is a EUR-specific causal variant for BMI (EA: $\hat{\beta} = -0.032$ vs. AA: $\hat{\beta} = 0.004$; EAF = 0.713 vs. 0.711). Detection is annotation-driven — rs11030119 overlaps DHS, TFBS, and enhancer marks and acts as a *BDNF* eQTL, linking this signal to hypothalamic energy balance and obesity. INFUSE correctly classifies it as ancestry-specific; MESuSiE misses it entirely.

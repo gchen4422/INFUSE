@@ -11,14 +11,10 @@ navbar:
     href: Data_prepare.html
   - text: Run INFUSE
     href: Run_INFUSE.html
-  - text: Examples
-    menu:
-    - text: Annotation Integration
-      href: annotation_integration.html
-    - text: Real Data Example
-      href: real_data_example.html
-  - text: About
-    href: about.html
+  - text: Annotation Integration
+    href: annotation_integration.html
+  - text: Real Data Example
+    href: real_data_example.html
 
 output:
   workflowr::wflow_html:
