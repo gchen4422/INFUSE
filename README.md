@@ -183,3 +183,9 @@ NUMEXPR_NUM_THREADS=1
 
 These settings are especially useful when running many loci in parallel, where each job should typically use a single computational thread unless the user explicitly allocates additional CPUs per task.
 
+## Citation
+
+If you use INFUSE in your research, please cite:
+
+> Chen G, et al. INFUSE improves multi-ancestry fine-mapping through high-dimensional functional annotation integration and robust LD discrepancy detection. *In preparation*.
+
