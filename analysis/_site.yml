@@ -1,0 +1,25 @@
+name: "INFUSE_website"
+output_dir: ../docs
+navbar:
+  title: "INFUSE"
+  left:
+  - text: Home
+    href: index.html
+  - text: Installation
+    href: installation.html
+  - text: Data Preparation
+    href: Data_prepare.html
+  - text: Run INFUSE
+    href: Run_INFUSE.html
+  - text: Annotation Integration
+    href: annotation_integration.html
+  - text: Real Data Example
+    href: real_data_example.html
+
+output:
+  workflowr::wflow_html:
+    toc: yes
+    toc_float: yes
+    theme: cosmo
+    highlight: textmate
+    css: custom.css

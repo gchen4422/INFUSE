@@ -1,0 +1,42 @@
+---
+title: "Installation"
+author: "Guangxin Chen"
+date: "2026-04-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Installation of INFUSE
+
+INFUSE is an R package hosted on GitHub. It can be installed using `devtools`:
+
+```r
+install.packages("devtools")
+devtools::install_github("gchen4422/INFUSE")
+```
+
+After installation, load the package:
+
+```r
+library(INFUSE)
+```
+
+## Dependencies
+
+INFUSE depends on the following R packages, which will be installed automatically:
+
+| Package | Purpose |
+|:---|:---|
+| `Rcpp` | C++ integration for compiled backend code |
+| `RcppArmadillo` | Linear algebra backend (Armadillo) for compiled code |
+| `R6` | Object-oriented classes used in the INFUSE model implementation |
+| `progress` | Progress bar display during iterative optimization |
+| `nloptr` | Numerical optimization for prior-variance estimation |
+| `elasticnet` | Sparse PCA via `spca()` for the `mlk` annotation method |
+| `glmnet` | Penalized regression for the `glm` annotation method |
+| `Matrix` | Sparse/block-diagonal matrix operations (used in `kriging_rss_joint`) |
+| `ggplot2` | Diagnostic plot output from `kriging_rss_joint` |
+| `mixsqp` | Mixture model fitting for the LD-discrepancy log-likelihood ratio |
+---
+

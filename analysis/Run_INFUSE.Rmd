@@ -1,0 +1,257 @@
+---
+title: "Running INFUSE"
+author: "Guangxin Chen"
+date: "2026-04-10"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+# Running `infuse_core()`
+
+The primary function in INFUSE is `infuse_core()`. This page describes the required and optional inputs, how to format your data, and how to interpret the output.
+
+---
+
+## 1. Input Data Format
+
+The example dataset is bundled with the package and can be loaded directly:
+
+```r
+library(INFUSE)
+data(infuse_example)
+
+R_mat_list           <- infuse_example$R_mat_list
+summary_stat_sd_list <- infuse_example$summary_stat_sd_list
+annot_file_all       <- infuse_example$annot_file_all
+ancestry_weight      <- infuse_example$ancestry_weight
+```
+
+### 1.1 LD Matrices (`R_mat_list`)
+
+`R_mat_list` is a **named list** of ancestry-specific LD correlation matrices. Each matrix must be:
+
+- Square and symmetric ($p \times p$)
+- Row names and column names set to SNP identifiers (rsID or `chr:pos`)
+- Contain values in $[-1, 1]$ (correlation, not covariance)
+
+In the example dataset, `R_mat_list` contains two ancestries (EUR and AFR), each with a $1432 \times 1432$ LD matrix:
+
+```r
+lapply(R_mat_list, dim)
+# $EUR
+# [1] 1432 1432
+#
+# $AFR
+# [1] 1432 1432
+```
+
+> **Important:** SNP ordering within each LD matrix must exactly match the ordering of rows in the corresponding summary statistics data frame.
+
+### 1.2 Summary Statistics (`summary_stat_sd_list`)
+
+`summary_stat_sd_list` is a **named list** of data frames, one per ancestry. Each data frame contains the following columns:
+
+| Column | Required | Description |
+|:---|:---|:---|
+| `SNP` | Yes | Variant identifier (rsID or `chr:pos`). Must match LD matrix row/column names. |
+| `Beta` | Yes | Effect size estimate (log-OR for binary, linear coefficient for quantitative traits). |
+| `Se` | Yes | Standard error of the effect size. |
+| `Z` | Recommended | Z-score ($\text{Beta} / \text{Se}$). |
+| `CHR` | Recommended | Chromosome number. |
+| `POS` | Recommended | Base pair position (GRCh38 for this example data). |
+| `ALT` / `REF` | Recommended | Effect and reference alleles. |
+| `MAF` | Optional | Minor allele frequency in the study sample. |
+| `N` | Optional | Per-variant sample size. |
+| `INFO` | Optional | Imputation quality score. |
+
+In the example dataset, each ancestry data frame has 1,432 SNPs on chromosome 1 (positions ~7.9–9.5 Mb) with 13 columns:
+
+```r
+lapply(summary_stat_sd_list, colnames)
+# $EUR
+#  [1] "SNP"  "CHR"  "POS"  "PVAL" "ALT"  "REF"  "N"    "Z"    "Beta" "Se"   "INFO" "MAF"  "CHR_POS"
+#
+# $AFR
+#  [1] "SNP"  "CHR"  "POS"  "PVAL" "ALT"  "REF"  "N"    "Z"    "Beta" "Se"   "INFO" "MAF"  "CHR_POS"
+
+lapply(summary_stat_sd_list, function(x) head(x, 3))
+# $EUR
+#         SNP CHR POS PVAL ALT REF N Z Beta Se INFO MAF CHR_POS
+# 1: rs9434555 1 7921393 0.6696394 C T 193593 -0.4266430 -0.00140069 0.003283050 1 0.368389 1_7921393
+# 2:  rs226480 1 7921592 0.3748737 T C 191483 -0.8873812 -0.00886010 0.009984548 1 0.973708 1_7921592
+# 3:  rs161827 1 7921974 0.4273739 T C 193597 -0.7936935 -0.00813568 0.010250406 1 0.975426 1_7921974
+#
+# $AFR
+#         SNP CHR POS PVAL ALT REF N Z Beta Se INFO MAF CHR_POS
+# 1: rs9434555 1 7921393 0.9527928 C T 60760 -0.05920003 -0.000347323 0.00586694 1 0.672251 1_7921393
+# 2:  rs226480 1 7921592 0.4111331 T C 61046 -0.82190129 -0.004663320 0.00567382 1 0.393163 1_7921592
+# 3:  rs161827 1 7921974 0.8207533 T C 61158  0.22657622  0.001453670 0.00641581 1 0.760514 1_7921974
+```
+
+Note that EUR has ~193,593 and AFR has ~60,760 samples per variant, reflecting typical multi-ancestry GWAS sample size differences.
+
+### 1.3 Annotation Matrix (`annot`)
+
+`annot` is a SNP $\times$ feature matrix of functional annotation values passed as `as.matrix()`. Rows correspond to SNPs (in the same order as `summary_stat_sd_list`), columns are annotation features.
+
+In the example dataset, `annot_file_all` has 1,432 SNPs and 186 annotation features drawn from BaselineLF reference from PolyFun ([Weissbrod et al., 2022](https://www.nature.com/articles/s41588-020-00735-5)).
+
+```r
+dim(annot_file_all)
+# [1] 1432  186
+
+colnames(annot_file_all)[1:10]
+#  [1] "Coding_UCSC_lowfreq"                        "Coding_UCSC_common"
+#  [3] "Coding_UCSC.flanking.500_lowfreq"           "Coding_UCSC.flanking.500_common"
+#  [5] "Conserved_LindbladToh_lowfreq"              "Conserved_LindbladToh_common"
+#  [7] "Conserved_LindbladToh.flanking.500_lowfreq" "Conserved_LindbladToh.flanking.500_common"
+#  [9] "CTCF_Hoffman_lowfreq"                       "CTCF_Hoffman_common"
+```
+
+If `annot` is `NULL`, INFUSE falls back to a uniform prior (equivalent to MESuSiE behavior).
+
+### 1.4 Ancestry Weights (`ancestry_weight`)
+
+`ancestry_weight` is a numeric vector that controls the relative contribution of ancestry-specific versus shared causal signals in the model. The vector has three elements corresponding to the weight on EUR-specific, AFR-specific, and shared signals respectively, and should sum to 1.
+
+The ratio of ancestry-specific to shared weights governs how strongly the model favors ancestry-specific causal SNP detection over shared signals. In the example dataset, we set a 3:1 ratio of ancestry-specific to shared (i.e., `c(3, 3, 1)` normalized), encouraging detection of ancestry-specific causal variants:
+
+```r
+print(ancestry_weight)
+# [1] 0.4285714 0.4285714 0.1428571   # = c(3, 3, 1) / sum(c(3, 3, 1))
+```
+
+The table below summarizes common configurations:
+
+| Scenario | Setting | Interpretation |
+|:---|:---|:---|
+| Pure shared signal | `c(0, 0, 1)` | All weight on shared component; no ancestry-specific detection |
+| Balanced | `c(1, 1, 1) / 3` | Equal weight on EUR-specific, AFR-specific, and shared |
+| Encourage ancestry-specific (default) | `c(3, 3, 1) / sum(c(3, 3, 1))` | 3:1 ratio favoring ancestry-specific signals |
+| Strong ancestry-specific | `c(5, 5, 1) / sum(c(5, 5, 1))` | 5:1 ratio; use when ancestry-specific effects are expected to dominate |
+
+
+
+If your GWAS locus is known to harbor population-specific signals (e.g., driven by ancestry-specific LD patterns or allele frequencies), increase the ancestry-specific weights. If you expect a single shared causal variant across all ancestries, reduce the ancestry-specific weights or use `c(0, 0, 1)`.
+
+
+---
+
+## 2. Running `infuse_core()`
+
+```r
+library(INFUSE)
+
+result <- infuse_core(
+  R_mat_list                 = R_mat_list,
+  summary_stat_list          = summary_stat_sd_list,
+  L                          = 10,
+  residual_variance          = NULL,
+  ancestry_weight            = ancestry_weight,
+  optim_method               = "optim",
+  estimate_residual_variance = FALSE,
+  max_iter                   = 100,
+  annot                      = as.matrix(annot_file_all),
+  annot_method               = "mlk"
+)
+# Total time used for the analysis: ~7 mins
+```
+
+### Parameter Reference
+
+| Parameter | Default | Description |
+|:---|:---|:---|
+| `R_mat_list` | — | Named list of LD matrices (required) |
+| `summary_stat_list` | — | Named list of summary stat data frames (required) |
+| `annot` | — | SNP $\times$ feature matrix of functional annotation values |
+| `L` | `10` | Maximum number of causal signals to model |
+| `residual_variance` | `NULL` | Fixed residual variance; `NULL` estimates from data |
+| `ancestry_weight` | `NULL` | Named numeric vector weighting each ancestry's contribution |
+| `optim_method` | `"optim"` | Optimization algorithm: `"optim"` or `"L-BFGS-B"` |
+| `estimate_residual_variance` | `FALSE` | Whether to estimate residual variance; set `FALSE` for summary statistics |
+| `max_iter` | `100` | Maximum ELBO optimization iterations |
+| `annot` | `NULL` | SNP × feature annotation matrix (pass as `as.matrix()`) |
+| `annot_method` | `"mlk"` | Annotation weight estimation method: `"mlk"` (sparse PCA) or `"glm"` |
+
+---
+
+## 3. Output Interpretation
+
+### 3.1 Posterior Inclusion Probabilities (`$pip`)
+
+A numeric vector of length $p$ giving the posterior inclusion probability (PIP) for each SNP — the probability that the SNP is causal in at least one ancestry.
+
+A common discovery threshold is PIP $> 0.5$. In the example dataset, one SNP exceeds this threshold:
+
+```r
+head(result$pip, 10)
+#  [1] 0.0006983240 0.0007671212 0.0012176492 0.0006983240 0.0006983240
+#  [6] 0.0007382932 0.0006983240 0.0006983240 0.0007895883 0.0006983240
+
+# High-confidence causal candidate
+names(result$pip)[result$pip > 0.5]
+# Potential causal SNPs with PIP > 0.5:  rs301807
+```
+
+### 3.2 Credible Sets (`$cs`)
+
+A list containing 95% credible sets — groups of SNPs whose cumulative PIP exceeds 0.95 — along with purity statistics (minimum, mean, and median absolute pairwise LD correlation within each set).
+
+In the example dataset, one credible set is identified (L1) containing 4 SNPs at indices 916, 918, 922, and 927, with very high purity (minimum $|r| = 0.991$):
+
+```r
+result$cs
+# $cs
+# $cs$L1
+# [1] 916 918 922 927
+#
+# $purity
+#    min.abs.corr mean.abs.corr median.abs.corr
+# L1    0.9913705     0.9967612       0.9982714
+#
+# $coverage
+# [1] 0.9865202        # actual coverage (≥ requested 0.95)
+#
+# $requested_coverage
+# [1] 0.95
+```
+
+**Interpreting purity:** All four SNPs in L1 have pairwise $|r| > 0.99$, indicating they are in near-perfect LD. This is a high-confidence, well-resolved credible set.
+
+### 3.3 Single-Effect Posteriors (`$alpha`)
+
+An $L \times p$ matrix where `alpha[l, j]` is the posterior probability that the $\ell$-th causal signal is driven by SNP $j$. Rows sum to 1 within each effect $\ell$.
+
+```r
+dim(result$alpha)
+# [1]   10 1432   (L=10 effects x 1432 SNPs)
+```
+
+### 3.4 Top Annotation Weights
+
+During model fitting, INFUSE reports the top-ranked annotation features for each effect. For effect L=1 in the example, the most enriched annotations are:
+
+```
+CpG_Content_50kb_lowfreq                   11.578
+Backgrd_Selection_Stat_common               3.832
+Human_Promoter_Villar_common                2.228
+Human_Promoter_Villar_ExAC.flanking.500     2.064
+Coding_UCSC_common                          1.724
+Transcr_Hoffman_common                      1.584
+```
+
+These suggest the causal signal at this locus is enriched in CpG-dense regions and human promoter annotations, consistent with a regulatory mechanism.
+
+---
+
+## 4. Tuning Parameters
+
+### L (number of effects)
+
+Setting `L` too low may miss multiple causal signals at a locus; setting it too high increases computation. For typical GWAS loci, `L = 10` is a safe default. If you expect a region to harbor only 1–2 signals, `L = 5` is sufficient.
+
+### Annotation method
+
+- **`mlk`**: Recommended. When the annotation matrix contains many features (>15), this method applies sparse PCA to obtain a lower-dimensional representation before estimating annotation weights. Otherwise, it estimates the weights by directly maximizing the joint likelihood without sparse PCA.
+- **`glm`**: Not recommended; included mainly for benchmarking purposes.
