@@ -1,5 +1,5 @@
 ---
-title: "INFUSE: INtegrating Functional annotations into mUlti-ancestry fine-mapping via Sum of single Effect model"
+title: "INFUSE"
 author: "Guangxin Chen"
 date: "2026-11-01"
 site: workflowr::wflow_site
