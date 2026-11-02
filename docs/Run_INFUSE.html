@@ -523,15 +523,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtree07f88111840f0b0372ec792571acb85b767b44e1targetblank07f8811a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtree0c6969639a8aa5191dfad9b785cf4002ea596b32targetblank0c69696a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/gchen4422/INFUSE/tree/07f88111840f0b0372ec792571acb85b767b44e1" target="_blank">07f8811</a>
+<a href="https://github.com/gchen4422/INFUSE/tree/0c6969639a8aa5191dfad9b785cf4002ea596b32" target="_blank">0c69696</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtree07f88111840f0b0372ec792571acb85b767b44e1targetblank07f8811a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtree0c6969639a8aa5191dfad9b785cf4002ea596b32targetblank0c69696a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -541,7 +541,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/gchen4422/INFUSE/tree/07f88111840f0b0372ec792571acb85b767b44e1" target="_blank">07f8811</a>.
+<a href="https://github.com/gchen4422/INFUSE/tree/0c6969639a8aa5191dfad9b785cf4002ea596b32" target="_blank">0c69696</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -599,6 +599,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/0c6969639a8aa5191dfad9b785cf4002ea596b32/analysis/Run_INFUSE.Rmd" target="_blank">0c69696</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Remove repeated input and progress explanations from running tutorial
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/492dc54415c4f9a0e54342e1d00085b4aa0243fb/docs/Run_INFUSE.html" target="_blank">492dc54</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render annotation setup and ancestry-unique interpretation note
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -816,9 +850,7 @@ Add INFUSE website (workflowr project) on gh-pages branch
 (58,658,279–59,673,534) used in <a href="Data_prepare.html">Data
 Preparation</a>, retaining both common and ancestry-unique variants.
 Install the current package version following <a
-href="installation.html">Installation</a>. Use the post-QC
-observed-input file created in Data Preparation; the controlled-access
-GWAS and LD inputs are not bundled with the website.</p>
+href="installation.html">Installation</a>.</p>
 <div id="prepare-inputs" class="section level2">
 <h2>1. Prepare Inputs</h2>
 <pre class="r"><code>library(INFUSE)
@@ -956,24 +988,6 @@ not required by <code>infuse_core()</code> itself. For inputs already
 harmonized externally, <code>prepare_infuse_union()</code> can skip
 allele harmonization only when both columns are omitted from every
 ancestry and <code>allele_ref = NULL</code>.</p>
-<pre class="r"><code>lapply(prep$R_mat_list, dim)</code></pre>
-<pre><code>$EUR
-[1] 2890 2890
-
-$AFR
-[1] 2890 2890</code></pre>
-<pre class="r"><code>vapply(prep$summary_stat_list, nrow, integer(1))</code></pre>
-<pre><code> EUR  AFR
-2890 2890 </code></pre>
-<pre class="r"><code>dim(prep$annot)</code></pre>
-<pre><code>[1] 2890  186</code></pre>
-<pre class="r"><code>colSums(prep$variant_available)</code></pre>
-<pre><code> EUR  AFR
-2108 2649 </code></pre>
-<p>Each ancestry now has 2,890 aligned input rows, but only the entries
-marked available contribute to its likelihood. For analyses in which
-every SNP is available in every ancestry, the original common-variant
-inputs remain supported with <code>variant_available = NULL</code>.</p>
 </div>
 <div id="ancestry-configuration-weights" class="section level3">
 <h3>Ancestry Configuration Weights</h3>
@@ -999,8 +1013,6 @@ variants to AFR.</p>
   variant_available = prep$variant_available,
   verbose = FALSE
 )</code></pre>
-<p><code>verbose = FALSE</code> suppresses routine progress output. It
-does not change the fitted model.</p>
 <div id="parameters-used-in-this-example" class="section level3">
 <h3>Parameters Used in This Example</h3>
 <table>
