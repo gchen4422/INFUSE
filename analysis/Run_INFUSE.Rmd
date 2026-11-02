@@ -9,7 +9,7 @@ editor_options:
 
 # Running `infuse_core()`
 
-This example fine-maps the same DBP locus on chromosome 20 (58,658,279–59,673,534) used in [Data Preparation](Data_prepare.html), retaining both common and ancestry-unique variants. Install the current package version following [Installation](installation.html). Use the post-QC observed-input file created in Data Preparation; the controlled-access GWAS and LD inputs are not bundled with the website.
+This example fine-maps the same DBP locus on chromosome 20 (58,658,279–59,673,534) used in [Data Preparation](Data_prepare.html), retaining both common and ancestry-unique variants. Install the current package version following [Installation](installation.html).
 
 ## 1. Prepare Inputs
 
@@ -58,15 +58,6 @@ Column names are **case-sensitive**: use `Beta` and `Se`, not `BETA` and `SE`. B
 
 Data Preparation renames the AoU `ALT`/`REF` columns to `A1`/`A2`. These two allele columns are not required by `infuse_core()` itself. For inputs already harmonized externally, `prepare_infuse_union()` can skip allele harmonization only when both columns are omitted from every ancestry and `allele_ref = NULL`.
 
-```{r input-dimensions}
-lapply(prep$R_mat_list, dim)
-vapply(prep$summary_stat_list, nrow, integer(1))
-dim(prep$annot)
-colSums(prep$variant_available)
-```
-
-Each ancestry now has 2,890 aligned input rows, but only the entries marked available contribute to its likelihood. For analyses in which every SNP is available in every ancestry, the original common-variant inputs remain supported with `variant_available = NULL`.
-
 ### Ancestry Configuration Weights
 
 `ancestry_weight` specifies prior weights on ancestry configurations. For **common variants**, the default two-ancestry weights are `c(3, 3, 1)/7`: the two ancestry-specific configurations followed by the shared configuration. Configuration names identify the corresponding ancestries.
@@ -86,8 +77,6 @@ result <- infuse_core(
   verbose = FALSE
 )
 ```
-
-`verbose = FALSE` suppresses routine progress output. It does not change the fitted model.
 
 ### Parameters Used in This Example
 
