@@ -31,7 +31,7 @@ Multi-ancestry fine-mapping can improve causal variant discovery by leveraging p
 INFUSE can be used when:
 
 - You have GWAS summary statistics from **2 or more ancestry groups** at a locus of interest
-- You have access to an **LD reference panel** matched to each ancestry
+- You have **ancestry-matched LD matrices** estimated from in-sample genotypes or external reference panels.
 - Your locus may contain **shared or ancestry-specific causal signals**, including variants available in only one ancestry
 - You have **functional annotation data** for the variants in the region (e.g: BaselineLF reference from PolyFun ([Weissbrod et al., 2022](https://www.nature.com/articles/s41588-020-00735-5)))
 
