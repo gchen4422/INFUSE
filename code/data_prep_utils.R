@@ -20,7 +20,8 @@ read_sumstats <- function(file, ref, maf_thresh = 0.01) {
   dt %>%
     filter(CHR %in% 1:22, CHR_POS %in% ref$CHR_POS) %>%
     arrange(CHR, POS) %>%
-    select(-CHISQ)
+    mutate(SNP = ref$SNP[match(CHR_POS, ref$CHR_POS)]) %>%
+    select(-any_of("CHISQ"))
 }
 
 # ── Step 2: Align GWAS SNP list with 1KG LD reference ────────────────────────
@@ -34,8 +35,8 @@ align_ld_ref <- function(ancestry, trait,
                           plink2   = "~/gwas_software/plink2.0/plink2") {
   anc      <- tolower(ancestry)
   bfile    <- file.path(kg_base,  paste0("1kg_", anc, "_maf_unrelated_biallelic_nodup_extracted"))
-  snplist  <- file.path(ss_dir,   paste0(trait, "_GRCh38_combined_format_noMHC_to_finemap_snplist"))
-  ref_flip <- file.path(ss_dir,   paste0(trait, "_GRCh38_combined_format_noMHC_to_finemap_ref_flip"))
+  snplist  <- file.path(ss_dir,   paste0(trait, "_", ancestry, "_GRCh38_combined_format_noMHC_to_finemap_snplist"))
+  ref_flip <- file.path(ss_dir,   paste0(trait, "_", ancestry, "_GRCh38_combined_format_noMHC_to_finemap_ref_flip"))
   outfile  <- file.path(out_base, paste0("1kg_", anc, "_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped"))
   system(paste0(plink2, " --bfile ", bfile, " --extract ", snplist,
                 " --ref-allele ", ref_flip, " 2 1 --make-bed --out ", outfile),
@@ -79,7 +80,15 @@ build_ld_matrix <- function(bim_ref, chr_num, start_pos, end_pos,
   write.table(mono_snps, paste0(snplist_file, "_snp_to_exclude"),
               quote = FALSE, row.names = FALSE, col.names = FALSE)
 
-  mat <- preprocess_data(as.matrix(plink_geno))
+  keep <- vapply(seq_len(ncol(plink_geno)), function(j) {
+    v <- plink_geno[, j]
+    sum(is.finite(v)) > 1L && is.finite(var(v, na.rm = TRUE)) && var(v, na.rm = TRUE) > 0
+  }, logical(1))
+  if (sum(keep) < 2L) stop("Fewer than two polymorphic reference variants")
+  plink_geno <- plink_geno[, keep, drop = FALSE]
+  write.table(colnames(plink_geno), snplist_file, quote = FALSE,
+              row.names = FALSE, col.names = FALSE)
+  mat <- preprocess_data(plink_geno)
   compute_cov(mat, paste0(snplist_file, ".ld"))
   invisible(snplist_file)
 }
@@ -98,10 +107,15 @@ filter_ld_mismatch <- function(geno_dir, locus_name, sumstats) {
 
   idx_to_remove <- c()
   while (!identical(idx_to_remove, integer(0))) {
-    sumstats_sub <- sumstats %>% filter(SNP %in% snplist)
-    plink_geno   <- as(snpStats::read.plink(paste0(snplist_file, ".bed"))$genotypes, "numeric")
-    mat          <- preprocess_data(as.matrix(plink_geno[, colnames(plink_geno) %in% snplist]))
+    ss_index <- match(snplist, sumstats$SNP)
+    if (anyNA(ss_index)) stop("Reference variants missing from summary statistics")
+    sumstats_sub <- sumstats[ss_index, , drop = FALSE]
+    plink_geno <- as(snpStats::read.plink(paste0(snplist_file, ".bed"))$genotypes, "numeric")
+    geno_index <- match(snplist, colnames(plink_geno))
+    if (anyNA(geno_index)) stop("LD variants missing from reference genotypes")
+    mat <- preprocess_data(plink_geno[, geno_index, drop = FALSE])
     cov_mat      <- (cov2cor(crossprod(mat)) + t(cov2cor(crossprod(mat)))) / 2
+    dimnames(cov_mat) <- list(snplist, snplist)
     diag         <- susieR::kriging_rss(sumstats_sub$Z, cov_mat, n = median(sumstats_sub$N))
     print(diag$plot)
     idx_to_remove <- diag$plot$plot_env$idx

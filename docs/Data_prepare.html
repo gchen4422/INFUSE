@@ -11,7 +11,7 @@
 
 <meta name="author" content="Guangxin Chen" />
 
-<meta name="date" content="2026-04-10" />
+<meta name="date" content="2026-11-01" />
 
 <title>Data Preparation</title>
 
@@ -351,7 +351,7 @@ div.tocify {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -363,7 +363,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Data Preparation</h1>
 <h4 class="author">Guangxin Chen</h4>
-<h4 class="date">2026-04-10</h4>
+<h4 class="date">2026-11-01</h4>
 
 </div>
 
@@ -371,7 +371,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -382,8 +382,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -392,16 +392,16 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-05-20
+<strong>Last updated:</strong> 2026-11-01
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>INFUSE_website/</code> <span
+<strong>Knit directory:</strong> <code>site/</code> <span
 class="glyphicon glyphicon-question-sign" aria-hidden="true"
 title="This is the local directory in which the code in this file was executed.">
 </span>
@@ -421,21 +421,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -526,13 +523,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongf46ac6d">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtreed5f7bc8c2457919189b9725c934d6e2228ed38e9targetblankd5f7bc8a">
 <span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Repository version:</strong> f46ac6d
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/gchen4422/INFUSE/tree/d5f7bc8c2457919189b9725c934d6e2228ed38e9" target="_blank">d5f7bc8</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongf46ac6d"
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtreed5f7bc8c2457919189b9725c934d6e2228ed38e9targetblankd5f7bc8a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -541,7 +540,8 @@ and connecting the code version to the results is critical for
 reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version f46ac6d.
+The results in this page were generated with repository version
+<a href="https://github.com/gchen4422/INFUSE/tree/d5f7bc8c2457919189b9725c934d6e2228ed38e9" target="_blank">d5f7bc8</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -555,25 +555,7 @@ depends on. Below is the status of the Git repository when the results
 were generated:
 </p>
 <pre><code>
-Ignored files:
-    Ignored:    .claude/
-    Ignored:    analysis/INFUSE.png
-
-Untracked files:
-    Untracked:  MAFPC_method_guangxin_revision_4.docx
-    Untracked:  analysis/Data_prepare.Rmd
-    Untracked:  analysis/Run_INFUSE.Rmd
-    Untracked:  analysis/annotation_integration.Rmd
-    Untracked:  analysis/custom.css
-    Untracked:  analysis/installation.Rmd
-    Untracked:  analysis/real_data_example.Rmd
-    Untracked:  build_site.R
-    Untracked:  code/data_prep_utils.R
-    Untracked:  code/plot_utils.R
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
-
+working directory clean
 </code></pre>
 <p>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not
@@ -588,9 +570,463 @@ have uncommitted changes.
 </div>
 <div id="versions" class="tab-pane fade">
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/Data_prepare.Rmd</code>) and HTML
+(<code>docs/Data_prepare.html</code>) files. If you’ve configured a
+remote Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/d5f7bc8c2457919189b9725c934d6e2228ed38e9/analysis/Data_prepare.Rmd" target="_blank">d5f7bc8</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Describe annotation inputs without a fixed panel size
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/76ed6e785fba018746e58ff3102d6e6db5a21fc9/docs/Data_prepare.html" target="_blank">76ed6e7</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render simplified annotation description
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/11a69194adcc3f1b6f1a2792b654881a06d49819/analysis/Data_prepare.Rmd" target="_blank">11a6919</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Simplify fitting annotation description
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/b7aad84f91983f10201466bf68e3c3a3befa77d7/docs/Data_prepare.html" target="_blank">b7aad84</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render input requirements and restored tuning guidance
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/e3da956df4c48e6d14658fd9708b74f98ba1bcef/analysis/Data_prepare.Rmd" target="_blank">e3da956</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Document summary-statistic requirements and restore tuning guidance
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/c0ecaaa9b652d25b9bbb46a3c9d5e984e1d27891/docs/Data_prepare.html" target="_blank">c0ecaaa</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render concise input harmonization explanation
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/019976023290d2cdd6eb4f6e499627ca0ac18d91/analysis/Data_prepare.Rmd" target="_blank">0199760</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Summarize input harmonization and remove redundant dimensions
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/1208b0e9f92989e0a35af785527f274598e15d58/docs/Data_prepare.html" target="_blank">1208b0e</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render streamlined LD filtering and variant harmonization steps
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/44414dd4391175fb543bda6615c42404c580511b/analysis/Data_prepare.Rmd" target="_blank">44414dd</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Streamline LD filtering code and common-variant terminology
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/0bb6c2faaf3bccda602180589d1729529597dd55/docs/Data_prepare.html" target="_blank">0bb6c2f</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render variant definitions and concise harmonization transition
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/af2d2dd6ce766e0ca2e26a3c111211b11f4f8348/analysis/Data_prepare.Rmd" target="_blank">af2d2dd</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Define common and ancestry-unique variants in data preparation
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/fa177fd49ab128fbc97ee84eab555e9e2ef8ae27/docs/Data_prepare.html" target="_blank">fa177fd</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render refined QC and allele harmonization wording
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/d1a7ec5760cada268c2fa73dbfaa78d2b5c7bbfb/analysis/Data_prepare.Rmd" target="_blank">d1a7ec5</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Clarify ancestry-specific QC and restore concise allele guidance
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/925c3eeef4f0343a382b0c97648f7fa4907f698b/docs/Data_prepare.html" target="_blank">925c3ee</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render data preparation without extra diagnostic figures
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/584baf0ffaad450b8cb9e3124e9fa75827424d01/analysis/Data_prepare.Rmd" target="_blank">584baf0</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Remove the additional ancestry diagnostic block and figures
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/f541d7ff445bb2e92ac84596ac1dc133ed678e41/docs/Data_prepare.html" target="_blank">f541d7f</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render concise variant harmonization tutorial
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/946608590be2b3a14343dda06bf4426aa8d84101/analysis/Data_prepare.Rmd" target="_blank">9466085</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Clarify variant harmonization and shorten diagnostic walkthrough
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/15a3316f6a2c7bf54d6f5c324c4319c2cdb8870c/docs/Data_prepare.html" target="_blank">15a3316</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render concise homepage and separate ancestry LD diagnostics
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/6146752d456bb8f9c1e6ed0c049ba4ee7172a2b1/analysis/Data_prepare.Rmd" target="_blank">6146752</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Simplify homepage and restore detailed LD diagnostic walkthrough
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/513311b3347d0833e2c5bc7e28eb4968a48bfa0d/docs/Data_prepare.html" target="_blank">513311b</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render original AoU locus workflow and manuscript model
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/6a7c1faf1e2cbff99b07b0105d49f3a00f7645b9/analysis/Data_prepare.Rmd" target="_blank">6a7c1fa</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Retain original AoU locus and align availability model with Methods
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/6204dba87dad2fd0950d32fd083594e963670313/docs/Data_prepare.html" target="_blank">6204dba</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render updated union fine-mapping tutorials
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/a936b8346ca60e59d4902ffd535a9a4c15e8c702/analysis/Data_prepare.Rmd" target="_blank">a936b83</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Update tutorials for ancestry-specific variant availability
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/23356cb2e808552f11c93b348e6edc5fd7e4df84/analysis/Data_prepare.Rmd" target="_blank">23356cb</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-06-10
+</td>
+<td>
+Add INFUSE website (workflowr project) on gh-pages branch
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/23356cb2e808552f11c93b348e6edc5fd7e4df84/docs/Data_prepare.html" target="_blank">23356cb</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-06-10
+</td>
+<td>
+Add INFUSE website (workflowr project) on gh-pages branch
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -612,60 +1048,70 @@ involves several key stages:</p>
 <li><strong>GWAS Harmonization:</strong> QC and filtering.</li>
 <li><strong>LD Reference Construction:</strong> Extracting matched
 genotype data from 1000 Genomes (1KG, GRCh38).</li>
-<li><strong>LD Mismatch Detection:</strong> Iterative pruning of
-variants with inconsistent LD patterns using
-<code>kriging_rss</code>.</li>
+<li><strong>LD Mismatch Detection:</strong> Pruning inconsistent
+variants separately within each ancestry.</li>
+<li><strong>Variant Harmonization:</strong> Harmonizing alleles and
+aligning ancestry-specific inputs for INFUSE.</li>
 </ol>
-<p>All helper functions used below are defined in
-<code>code/data_prep_utils.R</code> and loaded in the setup chunk.</p>
-<pre class="r"><code>source(here::here(&quot;code/data_prep_utils.R&quot;))</code></pre>
+<p>All helper functions used below are defined in <a
+href="https://github.com/gchen4422/INFUSE/blob/gh-pages/code/data_prep_utils.R"><code>code/data_prep_utils.R</code></a>
+and loaded in the setup chunk. The input paths identify the AoU/1KG
+resources; substitute your own locations. New files are written under
+<code>aou_union_example/</code>.</p>
+<pre class="r"><code>library(INFUSE)
+source(here::here(&quot;code/data_prep_utils.R&quot;))</code></pre>
 <hr />
 <div id="gwas-harmonization" class="section level3">
 <h3>1. GWAS Harmonization</h3>
 <p><strong>Goal:</strong> Standardize summary statistics from different
 ancestries (e.g., EUR and AFR) to a common reference panel (e.g. 1000
 Genome).</p>
+<p>Apply QC separately in each ancestry and retain variants available in
+either EUR or AFR. In this analysis, <strong>common variants</strong>
+are variants available in both ancestries, whereas
+<strong>ancestry-unique variants</strong> are available in only one
+ancestry. Unlike MESuSiE, INFUSE <strong>does not</strong> require
+restricting the analysis to common variants.</p>
 <p>We recommend removing <strong>strand-ambiguous SNPs</strong>,
 <strong>multi-allelic variants</strong>, <strong>variants within the MHC
 region</strong>, and variants with <strong>minor allele frequency (MAF)
-&lt; 0.01</strong> via <code>GWAS_QC</code>. Importantly, similar to the
-joint-modeling approach in MESuSiE, we <strong>restrict to the
-intersection of SNPs between EUR and AFR</strong>.</p>
+&lt; 0.01</strong> via <code>GWAS_QC</code>. Match each ancestry against
+its own 1KG reference panel.</p>
 <pre class="r"><code>library(tidyverse)
-source(&quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/utility.R&quot;)
+library(data.table)
 
-ref   &lt;- fread(&quot;/scratch/negishi/chen4422/UKBB_pheSVD-main/ukb_geno/in_sample_ld/1kg_build38/flipped_finemap_allbyall/1kg_afr_maf_unrelated_biallelic_nodup_extracted.bim&quot;)
-colnames(ref) &lt;- c(&quot;CHR&quot;, &quot;SNP&quot;, &quot;CM&quot;, &quot;POS&quot;, &quot;ALT&quot;, &quot;REF&quot;)
-ref   &lt;- GWAS_QC(ref, 0.01)
+kg_base &lt;- &quot;/scratch/negishi/chen4422/UKBB_pheSVD-main/ukb_geno/in_sample_ld/1kg_build38/flipped_finemap_allbyall&quot;
+ref_eur &lt;- fread(file.path(kg_base, &quot;1kg_eur_maf_unrelated_biallelic_nodup_extracted.bim&quot;))
+ref_afr &lt;- fread(file.path(kg_base, &quot;1kg_afr_maf_unrelated_biallelic_nodup_extracted.bim&quot;))
+colnames(ref_eur) &lt;- colnames(ref_afr) &lt;- c(&quot;CHR&quot;, &quot;SNP&quot;, &quot;CM&quot;, &quot;POS&quot;, &quot;ALT&quot;, &quot;REF&quot;)
+ref_eur &lt;- GWAS_QC(ref_eur, 0.01)
+ref_afr &lt;- GWAS_QC(ref_afr, 0.01)
 annot &lt;- fread(&quot;/scratch/negishi/chen4422/UKBB_pheSVD-main/ukb_geno/in_sample_ld/baselineLF_v2.2.UKB/annot_combine/first_three_columns.annot&quot;)
 
 afr_file &lt;- &quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/DBP_v8_GWAS_afr_regenie_results_From5_20250417_combined_format_noMHC.csv.gz&quot;
 eur_file &lt;- &quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/DBP_v8_GWAS_eur_regenie_results_From5_20250417_combined_format_noMHC.csv.gz&quot;
 
-# QC and filter each ancestry against the 1KG reference
-afrdata_qced &lt;- read_sumstats(afr_file, ref)
-eurdata_qced &lt;- read_sumstats(eur_file, ref)
+# QC each ancestry against its own reference, without cross-ancestry intersection.
+afrdata_qced &lt;- read_sumstats(afr_file, ref_afr)
+eurdata_qced &lt;- read_sumstats(eur_file, ref_eur)
 
-# Restrict to common SNPs, align alleles, and filter to annotation SNPs
-common_snp        &lt;- find_common_snps(eurdata_qced, afrdata_qced)
-eurdata_tofinemap &lt;- eurdata_qced %&gt;% filter(CHR_POS %in% common_snp)
-eurdata_tofinemap$SNP &lt;- ref$SNP[match(eurdata_tofinemap$CHR_POS, ref$CHR_POS)]
-afrdata_tofinemap &lt;- allele_flip(eurdata_tofinemap,
-                                 afrdata_qced %&gt;% filter(CHR_POS %in% common_snp))
-afrdata_tofinemap$SNP &lt;- ref$SNP[match(afrdata_tofinemap$CHR_POS, ref$CHR_POS)]
-eurdata_tofinemap &lt;- eurdata_tofinemap %&gt;% filter(SNP %in% annot$SNP)
-afrdata_tofinemap &lt;- afrdata_tofinemap %&gt;% filter(SNP %in% annot$SNP)
+eurdata_tofinemap &lt;- eurdata_qced %&gt;% filter(SNP %in% annot$SNP)
+afrdata_tofinemap &lt;- afrdata_qced %&gt;% filter(SNP %in% annot$SNP)
 
-# Write outputs
-trait   &lt;- &quot;DBP&quot;
-out_dir &lt;- &quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/summstats_to_finemap/&quot;
-fwrite(eurdata_tofinemap,paste0(out_dir, trait, &quot;_EUR_GRCh38_combined_format_noMHC_to_finemap.csv&quot;))
-fwrite(afrdata_tofinemap,paste0(out_dir, trait, &quot;_AFR_GRCh38_combined_format_noMHC_to_finemap.csv&quot;))
-fwrite(eurdata_tofinemap[, c(1, 6)], paste0(out_dir, trait, &quot;_GRCh38_combined_format_noMHC_to_finemap_ref_flip&quot;),  col.names = FALSE, sep = &quot; &quot;)
-fwrite(eurdata_tofinemap[, c(1)], paste0(out_dir, trait, &quot;_GRCh38_combined_format_noMHC_to_finemap_snplist&quot;),   col.names = FALSE)</code></pre>
-<p>Note that the <strong>ALT and REF alleles need to be consistent
-across ancestry groups</strong>. In the <em>All of Us</em> dataset this
-is pre-harmonized; for other sources see <a
+# Write separate ancestry-specific summary statistics and reference lists.
+trait &lt;- &quot;DBP&quot;
+out_dir &lt;- file.path(&quot;aou_union_example&quot;, &quot;summary_statistics&quot;)
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+for (anc in c(&quot;EUR&quot;, &quot;AFR&quot;)) {
+  ss &lt;- as.data.frame(if (anc == &quot;EUR&quot;) eurdata_tofinemap else afrdata_tofinemap)
+  prefix &lt;- file.path(out_dir, paste0(trait, &quot;_&quot;, anc, &quot;_GRCh38_combined_format_noMHC_to_finemap&quot;))
+  fwrite(ss, paste0(prefix, &quot;.csv&quot;))
+  fwrite(ss[, c(&quot;SNP&quot;, &quot;REF&quot;)], paste0(prefix, &quot;_ref_flip&quot;), col.names = FALSE, sep = &quot; &quot;)
+  fwrite(ss[, &quot;SNP&quot;, drop = FALSE], paste0(prefix, &quot;_snplist&quot;), col.names = FALSE)
+}</code></pre>
+<p>ALT and REF alleles need to be consistent across ancestry groups. The
+All of Us summary statistics used here are already harmonized; for other
+sources see <a
 href="https://borangao.github.io/meSuSie_Analysis/GWAS_QC.html">this
 document</a>.</p>
 <hr />
@@ -674,16 +1120,18 @@ document</a>.</p>
 class="section level3">
 <h3>2. Align GWAS Summary Statistics with LD Reference Panel</h3>
 <p><strong>Goal:</strong> Construct ancestry-matched LD reference
-genotypes from 1KG that <strong>exactly match</strong> the GWAS variant
-list and use the same REF/ALT orientation, avoiding sign errors in
-Z-scores.</p>
+genotypes from 1KG that <strong>match each ancestry’s own</strong> GWAS
+variant list and use the same REF/ALT orientation, avoiding sign errors
+in Z-scores.</p>
 <p>We use <code>plink2</code> to subset 1KG genotypes
 (<code>--extract</code>), enforce REF allele orientation
 (<code>--ref-allele</code>), and output a new
 <code>.bed/.bim/.fam</code> file (<code>--make-bed</code>).</p>
 <pre class="r"><code>trait &lt;- &quot;DBP&quot;
-align_ld_ref(&quot;EUR&quot;, trait)
-align_ld_ref(&quot;AFR&quot;, trait)</code></pre>
+kg_dir &lt;- file.path(&quot;aou_union_example&quot;, &quot;ld_reference&quot;)
+dir.create(kg_dir, recursive = TRUE, showWarnings = FALSE)
+align_ld_ref(&quot;EUR&quot;, trait, kg_base = kg_base, ss_dir = out_dir, out_base = kg_dir)
+align_ld_ref(&quot;AFR&quot;, trait, kg_base = kg_base, ss_dir = out_dir, out_base = kg_dir)</code></pre>
 <hr />
 </div>
 <div id="ld-reference-construction" class="section level3">
@@ -693,19 +1141,19 @@ chromosome 20</strong> (DBP) as an illustrative example.
 <code>build_ld_matrix()</code> extracts SNPs in the region, runs plink2,
 flags monomorphic variants, and writes the LD correlation matrix.</p>
 <pre class="r"><code>trait   &lt;- &quot;DBP&quot;
-kg_dir  &lt;- paste0(&quot;/scratch/negishi/chen4422/UKBB_pheSVD-main/ukb_geno/in_sample_ld/1kg_build38/flipped_finemap_allbyall/lipids_v8/test_MF/&quot;)
-eur_ref &lt;- fread(paste0(kg_dir, &quot;1kg_eur_maf_unrelated_biallelic_nodup_extracted_&quot;, trait, &quot;_flipped.bim&quot;))
-afr_ref &lt;- fread(paste0(kg_dir, &quot;1kg_afr_maf_unrelated_biallelic_nodup_extracted_&quot;, trait, &quot;_flipped.bim&quot;))
+kg_dir &lt;- file.path(&quot;aou_union_example&quot;, &quot;ld_reference&quot;)
+eur_ref &lt;- fread(file.path(kg_dir, paste0(&quot;1kg_eur_maf_unrelated_biallelic_nodup_extracted_&quot;, trait, &quot;_flipped.bim&quot;)))
+afr_ref &lt;- fread(file.path(kg_dir, paste0(&quot;1kg_afr_maf_unrelated_biallelic_nodup_extracted_&quot;, trait, &quot;_flipped.bim&quot;)))
 
 start &lt;- 58658279; end &lt;- 59673534
 
 build_ld_matrix(eur_ref, chr_num = 20, start_pos = start, end_pos = end,
-                bfile   = paste0(kg_dir, &quot;1kg_eur_maf_unrelated_biallelic_nodup_extracted_&quot;, trait, &quot;_flipped&quot;),
-                out_dir = paste0(&quot;risk_loci_ld_eur_&quot;, trait))
+                bfile   = file.path(kg_dir, paste0(&quot;1kg_eur_maf_unrelated_biallelic_nodup_extracted_&quot;, trait, &quot;_flipped&quot;)),
+                out_dir = file.path(&quot;aou_union_example&quot;, paste0(&quot;risk_loci_ld_eur_&quot;, trait)))
 
 build_ld_matrix(afr_ref, chr_num = 20, start_pos = start, end_pos = end,
-                bfile   = paste0(kg_dir, &quot;1kg_afr_maf_unrelated_biallelic_nodup_extracted_&quot;, trait, &quot;_flipped&quot;),
-                out_dir = paste0(&quot;risk_loci_ld_afr_&quot;, trait))</code></pre>
+                bfile   = file.path(kg_dir, paste0(&quot;1kg_afr_maf_unrelated_biallelic_nodup_extracted_&quot;, trait, &quot;_flipped&quot;)),
+                out_dir = file.path(&quot;aou_union_example&quot;, paste0(&quot;risk_loci_ld_afr_&quot;, trait)))</code></pre>
 <hr />
 </div>
 <div id="ld-mismatch-detection" class="section level3">
@@ -718,27 +1166,101 @@ Z-scores are inconsistent with the LD structure.
 automatically.</p>
 <pre class="r"><code>trait &lt;- &quot;DBP&quot;
 
-geno_dir_eur &lt;- paste0(&quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/risk_loci_ld_eur_&quot;, trait, &quot;/&quot;)
-geno_dir_afr &lt;- paste0(&quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/risk_loci_ld_afr_&quot;, trait, &quot;/&quot;)
+geno_dir_eur &lt;- file.path(&quot;aou_union_example&quot;, paste0(&quot;risk_loci_ld_eur_&quot;, trait))
+geno_dir_afr &lt;- file.path(&quot;aou_union_example&quot;, paste0(&quot;risk_loci_ld_afr_&quot;, trait))
 
-afr_sumstats &lt;- fread(paste0(&quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/summstats_to_finemap/&quot;, trait, &quot;_AFR_GRCh38_combined_format_noMHC_to_finemap.csv&quot;))
-eur_sumstats &lt;- fread(paste0(&quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/summstats_to_finemap/&quot;, trait, &quot;_EUR_GRCh38_combined_format_noMHC_to_finemap.csv&quot;))
+afr_sumstats &lt;- fread(file.path(out_dir, paste0(trait, &quot;_AFR_GRCh38_combined_format_noMHC_to_finemap.csv&quot;)))
+eur_sumstats &lt;- fread(file.path(out_dir, paste0(trait, &quot;_EUR_GRCh38_combined_format_noMHC_to_finemap.csv&quot;)))
 
-afr_res &lt;- filter_ld_mismatch(geno_dir_afr, &quot;loci_example&quot;, afr_sumstats)</code></pre>
-<p><img src="figure/Data_prepare.Rmd/step4-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Data_prepare.Rmd/step4-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The <strong>Kriging RSS diagnostic</strong> plot color-codes SNPs by
-their likelihood of being an LD outlier. In the example above, an
-initial outlier was identified and removed in the following
-iteration.</p>
-<p>We apply the same procedure to the European American group, then save
-the cleaned outputs:</p>
-<pre class="r"><code>eur_res &lt;- filter_ld_mismatch(geno_dir_eur, &quot;loci_example&quot;, eur_sumstats)
+afr_res &lt;- filter_ld_mismatch(geno_dir_afr, &quot;loci_example&quot;, afr_sumstats)
+eur_res &lt;- filter_ld_mismatch(geno_dir_eur, &quot;loci_example&quot;, eur_sumstats)
 
-data_dir &lt;- paste0(&quot;/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/results_&quot;, trait, &quot;/summary_data/&quot;)
-fwrite(afr_res$sumstats, paste0(data_dir, &quot;afr_loci_example_summ&quot;))
-fwrite(eur_res$sumstats, paste0(data_dir, &quot;eur_loci_example_summ&quot;))
-fwrite(afr_res$cov,      paste0(data_dir, &quot;afr_loci_example.ld&quot;), sep = &quot; &quot;)
-fwrite(eur_res$cov,      paste0(data_dir, &quot;eur_loci_example.ld&quot;), sep = &quot; &quot;)</code></pre>
+data_dir &lt;- file.path(&quot;aou_union_example&quot;, paste0(&quot;results_&quot;, trait), &quot;summary_data&quot;)
+dir.create(data_dir, recursive = TRUE, showWarnings = FALSE)
+fwrite(afr_res$sumstats, file.path(data_dir, &quot;afr_loci_example_summ&quot;))
+fwrite(eur_res$sumstats, file.path(data_dir, &quot;eur_loci_example_summ&quot;))
+fwrite(afr_res$cov,      file.path(data_dir, &quot;afr_loci_example.ld&quot;), sep = &quot; &quot;)
+fwrite(eur_res$cov,      file.path(data_dir, &quot;eur_loci_example.ld&quot;), sep = &quot; &quot;)</code></pre>
+<hr />
+</div>
+<div id="variant-harmonization" class="section level3">
+<h3>5. Variant Harmonization</h3>
+<p>Combine the post-QC summary statistics and LD from the preceding
+steps, retaining both common and ancestry-unique variants.</p>
+<p>Match functional annotations to variants by rsID and allele pair,
+excluding missing or ambiguous matches.
+<code>DBP_chr20_annotations.rds</code> below is the resulting numeric
+annotation matrix, with SNP IDs as row names.</p>
+<pre class="r"><code>to_infuse_summary &lt;- function(ss) {
+  ss &lt;- as.data.frame(ss)
+  rename &lt;- c(BETA = &quot;Beta&quot;, SE = &quot;Se&quot;, ALT = &quot;A1&quot;, REF = &quot;A2&quot;)
+  for (old in names(rename)) {
+    if (old %in% names(ss)) names(ss)[names(ss) == old] &lt;- rename[[old]]
+  }
+  if (!&quot;Z&quot; %in% names(ss)) ss$Z &lt;- ss$Beta / ss$Se
+  ss
+}
+summary_stat_list &lt;- list(
+  EUR = to_infuse_summary(eur_res$sumstats),
+  AFR = to_infuse_summary(afr_res$sumstats)
+)
+R_mat_list &lt;- list(EUR = eur_res$cov, AFR = afr_res$cov)
+annot &lt;- readRDS(&quot;data/DBP_chr20_annotations.rds&quot;)
+stopifnot(!is.null(rownames(annot)))
+
+ref &lt;- do.call(rbind, summary_stat_list)
+ref &lt;- ref[!duplicated(ref$SNP), ]
+ref &lt;- ref[order(ref$CHR, ref$POS, ref$SNP), ]
+union_ids &lt;- ref$SNP[ref$SNP %in% rownames(annot)]
+allele_ref &lt;- ref[match(union_ids, ref$SNP), c(&quot;SNP&quot;, &quot;A1&quot;, &quot;A2&quot;)]
+for (anc in names(summary_stat_list)) {
+  ss &lt;- summary_stat_list[[anc]]
+  ss &lt;- ss[ss$SNP %in% union_ids, ]
+  summary_stat_list[[anc]] &lt;- ss
+  R_mat_list[[anc]] &lt;- R_mat_list[[anc]][ss$SNP, ss$SNP, drop = FALSE]
+}
+observed &lt;- list(
+  summary_stat_list = summary_stat_list,
+  R_mat_list = R_mat_list,
+  annot = annot[union_ids, , drop = FALSE],
+  union_ids = union_ids,
+  allele_ref = allele_ref
+)
+dir.create(&quot;data&quot;, showWarnings = FALSE)
+saveRDS(observed, &quot;data/DBP_chr20_observed.rds&quot;)</code></pre>
+<pre class="r"><code>prep &lt;- prepare_infuse_union(
+  summary_stat_list = observed$summary_stat_list,
+  R_mat_list = observed$R_mat_list,
+  annot = observed$annot,
+  annot_ids = rownames(observed$annot),
+  union_ids = observed$union_ids,
+  allele_ref = observed$allele_ref,
+  ld_allele_coding = &quot;ancestry_effect&quot;,
+  require_complete_ld_dimnames = TRUE
+)
+
+colSums(prep$variant_available)</code></pre>
+<pre><code> EUR  AFR
+2108 2649 </code></pre>
+<pre class="r"><code>table(prep$variant_map$availability_pattern)</code></pre>
+<pre><code>
+    AFR     EUR EUR+AFR
+    782     241    1867 </code></pre>
+<p>After annotation matching, the example contains <strong>2,890
+variants</strong>: 1,867 common variants and 1,023 ancestry-unique
+variants (241 EUR-only and 782 AFR-only). EUR and AFR contribute 2,108
+and 2,649 variants, respectively.</p>
+<p>The function <code>prepare_infuse_union()</code> aligns SNPs and
+harmonizes alleles across the ancestry-specific inputs, retaining both
+common and ancestry-unique variants. Set
+<code>ld_allele_coding = "ancestry_effect"</code> when LD follows each
+ancestry’s effect-allele coding, as in this example, or
+<code>"reference"</code> when LD already follows
+<code>allele_ref</code>. The returned
+<code>prep$variant_available</code> records the availability of common
+and ancestry-unique variants in each ancestry.</p>
+<p>Continue to <a href="Run_INFUSE.html">Run INFUSE</a> to fine-map this
+locus.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -756,44 +1278,31 @@ Matrix products: default
 BLAS/LAPACK: /apps/spack/negishi/apps/openblas/0.3.21-gcc-12.2.0-lzvicim/lib/libopenblas_zenp-r0.3.21.so
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] stats     graphics  grDevices utils     datasets  methods   base
 
 other attached packages:
-[1] dplyr_1.1.4       data.table_1.16.2 workflowr_1.7.2  
+[1] dplyr_1.1.4       data.table_1.16.2 INFUSE_0.0.2.9000
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.1    xfun_0.48           bslib_0.8.0        
- [4] splines_4.2.2       lattice_0.20-45     colorspace_2.1-1   
- [7] vctrs_0.6.5         generics_0.1.3      htmltools_0.5.8.1  
-[10] yaml_2.3.10         utf8_1.2.4          survival_3.4-0     
-[13] rlang_1.2.0         mixsqp_0.3-54       jquerylib_0.1.4    
-[16] later_1.3.2         pillar_1.9.0        glue_1.8.0         
-[19] withr_3.0.2         BiocGenerics_0.44.0 plyr_1.8.9         
-[22] matrixStats_1.4.1   lifecycle_1.0.5     stringr_1.5.1      
-[25] zlibbioc_1.44.0     munsell_0.5.1       gtable_0.3.6       
-[28] evaluate_1.0.5      labeling_0.4.3      knitr_1.48         
-[31] callr_3.7.6         fastmap_1.2.0       httpuv_1.6.6       
-[34] ps_1.9.2            irlba_2.3.5.1       fansi_1.0.6        
-[37] highr_0.11          Rcpp_1.1.1          scales_1.3.0       
-[40] promises_1.3.0      susieR_0.12.35      cachem_1.1.0       
-[43] jsonlite_2.0.0      farver_2.1.2        fs_2.0.1           
-[46] ggplot2_3.5.2       digest_0.6.37       stringi_1.8.4      
-[49] processx_3.8.7      getPass_0.2-4       rprojroot_2.1.1    
-[52] grid_4.2.2          here_1.0.1          cli_3.6.3          
-[55] tools_4.2.2         magrittr_2.0.3      sass_0.4.9         
-[58] snpStats_1.48.0     tibble_3.2.1        crayon_1.5.3       
-[61] whisker_0.4         pkgconfig_2.0.3     Matrix_1.6-4       
-[64] reshape_0.8.9       rmarkdown_2.28      httr_1.4.7         
-[67] rstudioapi_0.14     R6_2.6.1            git2r_0.36.2       
-[70] compiler_4.2.2     </code></pre>
+ [1] Rcpp_1.1.1        nloptr_2.1.1      pillar_1.9.0      compiler_4.2.2
+ [5] bslib_0.8.0       later_1.3.2       jquerylib_0.1.4   git2r_0.36.2
+ [9] workflowr_1.7.2   tools_4.2.2       digest_0.6.37     gtable_0.3.6
+[13] lattice_0.20-45   jsonlite_2.0.0    evaluate_1.0.5    lifecycle_1.0.5
+[17] tibble_3.2.1      pkgconfig_2.0.3   rlang_1.2.0       Matrix_1.6-4
+[21] cli_3.6.3         yaml_2.3.10       xfun_0.48         fastmap_1.2.0
+[25] stringr_1.5.1     knitr_1.48        generics_0.1.3    fs_2.0.1
+[29] vctrs_0.6.5       sass_0.4.9        grid_4.2.2        tidyselect_1.2.1
+[33] rprojroot_2.1.1   here_1.0.1        glue_1.8.0        R6_2.6.1
+[37] fansi_1.0.6       rmarkdown_2.28    mixsqp_0.3-54     irlba_2.3.5.1
+[41] ggplot2_3.5.2     magrittr_2.0.3    whisker_0.4       scales_1.3.0
+[45] promises_1.3.0    htmltools_0.5.8.1 colorspace_2.1-1  httpuv_1.6.6
+[49] utf8_1.2.4        stringi_1.8.4     munsell_0.5.1     cachem_1.1.0     </code></pre>
 </div>
 </div>
 </div>

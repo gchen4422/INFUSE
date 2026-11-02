@@ -1,7 +1,7 @@
 ---
 title: "Installation"
 author: "Guangxin Chen"
-date: "2026-04-10"
+date: "2026-11-01"
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
@@ -34,9 +34,11 @@ INFUSE depends on the following R packages, which will be installed automaticall
 | `progress` | Progress bar display during iterative optimization |
 | `nloptr` | Numerical optimization for prior-variance estimation |
 | `elasticnet` | Sparse PCA via `spca()` for the `mlk` annotation method |
-| `glmnet` | Penalized regression for the `glm` annotation method |
+| `glmnet` | Penalized regression for the `glmnet` annotation method |
 | `Matrix` | Sparse/block-diagonal matrix operations (used in `kriging_rss_joint`) |
 | `ggplot2` | Diagnostic plot output from `kriging_rss_joint` |
 | `mixsqp` | Mixture model fitting for the LD-discrepancy log-likelihood ratio |
+| `cowplot` | Combining fine-mapping and diagnostic plots |
+| `dplyr` | GWAS data manipulation and QC |
 ---
 

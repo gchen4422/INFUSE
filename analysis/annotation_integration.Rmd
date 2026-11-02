@@ -1,7 +1,7 @@
 ---
 title: "Functional Annotation Integration"
 author: "Guangxin Chen"
-date: "2026-04-10"
+date: "2026-11-01"
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
@@ -10,6 +10,18 @@ editor_options:
 # Integrating Functional Annotations with INFUSE
 
 A key feature of INFUSE is its ability to incorporate functional genomic annotations to construct biologically informed prior probabilities for each candidate variant. This page describes how to prepare annotation data, which annotation types are most informative, and how the two annotation methods (`mlk` and `glm`) work internally.
+
+The examples below use the bundled dataset. Load it and define the inputs before running the code on this page:
+
+```{r load-example, message=FALSE, warning=FALSE}
+library(INFUSE)
+data(infuse_example)
+
+R_mat_list           <- infuse_example$R_mat_list
+summary_stat_sd_list <- infuse_example$summary_stat_sd_list
+annot_file_all       <- infuse_example$annot_file_all
+ancestry_weight      <- infuse_example$ancestry_weight
+```
 
 ---
 
@@ -90,7 +102,7 @@ annot_mat <- annot_mat[snps_in_locus, ]
 
 ## 4. Statistical Model for Annotation-Informed Priors
 
-INFUSE parameterizes the prior causal probability for SNP $j$ under the $\ell$-th single effect using a softmax over annotation features (see [Statistical Framework](index.html)):
+INFUSE parameterizes the prior causal probability for SNP $j$ under the $\ell$-th single effect using a softmax over annotation features:
 
 $$\pi_{\ell j} = \frac{\exp(\mathbf{A}_j^T \mathbf{w}_\ell)}{\displaystyle\sum_{j'=1}^{m} \exp(\mathbf{A}_{j'}^T \mathbf{w}_\ell)}$$
 

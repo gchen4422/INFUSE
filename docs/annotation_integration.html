@@ -11,7 +11,7 @@
 
 <meta name="author" content="Guangxin Chen" />
 
-<meta name="date" content="2026-04-10" />
+<meta name="date" content="2026-11-01" />
 
 <title>Functional Annotation Integration</title>
 
@@ -351,7 +351,7 @@ div.tocify {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -363,7 +363,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Functional Annotation Integration</h1>
 <h4 class="author">Guangxin Chen</h4>
-<h4 class="date">2026-04-10</h4>
+<h4 class="date">2026-11-01</h4>
 
 </div>
 
@@ -371,7 +371,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -382,8 +382,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -392,16 +392,16 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-05-20
+<strong>Last updated:</strong> 2026-11-01
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>INFUSE_website/</code> <span
+<strong>Knit directory:</strong> <code>site/</code> <span
 class="glyphicon glyphicon-question-sign" aria-hidden="true"
 title="This is the local directory in which the code in this file was executed.">
 </span>
@@ -421,21 +421,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -526,13 +523,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongf46ac6d">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtreefc5cf11f24ce53f54d53c7746b292a4d3f70f47atargetblankfc5cf11a">
 <span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Repository version:</strong> f46ac6d
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/gchen4422/INFUSE/tree/fc5cf11f24ce53f54d53c7746b292a4d3f70f47a" target="_blank">fc5cf11</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongf46ac6d"
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtreefc5cf11f24ce53f54d53c7746b292a4d3f70f47atargetblankfc5cf11a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -541,7 +540,8 @@ and connecting the code version to the results is critical for
 reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version f46ac6d.
+The results in this page were generated with repository version
+<a href="https://github.com/gchen4422/INFUSE/tree/fc5cf11f24ce53f54d53c7746b292a4d3f70f47a" target="_blank">fc5cf11</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -555,25 +555,7 @@ depends on. Below is the status of the Git repository when the results
 were generated:
 </p>
 <pre><code>
-Ignored files:
-    Ignored:    .claude/
-    Ignored:    analysis/INFUSE.png
-
-Untracked files:
-    Untracked:  MAFPC_method_guangxin_revision_4.docx
-    Untracked:  analysis/Data_prepare.Rmd
-    Untracked:  analysis/Run_INFUSE.Rmd
-    Untracked:  analysis/annotation_integration.Rmd
-    Untracked:  analysis/custom.css
-    Untracked:  analysis/installation.Rmd
-    Untracked:  analysis/real_data_example.Rmd
-    Untracked:  build_site.R
-    Untracked:  code/data_prep_utils.R
-    Untracked:  code/plot_utils.R
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
-
+working directory clean
 </code></pre>
 <p>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not
@@ -588,9 +570,90 @@ have uncommitted changes.
 </div>
 <div id="versions" class="tab-pane fade">
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown
+(<code>analysis/annotation_integration.Rmd</code>) and HTML
+(<code>docs/annotation_integration.html</code>) files. If you’ve
+configured a remote Git repository (see <code>?wflow_git_remote</code>),
+click on the hyperlinks in the table below to view the files as they
+were in that past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/fc5cf11f24ce53f54d53c7746b292a4d3f70f47a/analysis/annotation_integration.Rmd" target="_blank">fc5cf11</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Load bundled inputs in annotation tutorial and remove obsolete link
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/23356cb2e808552f11c93b348e6edc5fd7e4df84/analysis/annotation_integration.Rmd" target="_blank">23356cb</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-06-10
+</td>
+<td>
+Add INFUSE website (workflowr project) on gh-pages branch
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/23356cb2e808552f11c93b348e6edc5fd7e4df84/docs/annotation_integration.html" target="_blank">23356cb</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-06-10
+</td>
+<td>
+Add INFUSE website (workflowr project) on gh-pages branch
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -604,6 +667,15 @@ probabilities for each candidate variant. This page describes how to
 prepare annotation data, which annotation types are most informative,
 and how the two annotation methods (<code>mlk</code> and
 <code>glm</code>) work internally.</p>
+<p>The examples below use the bundled dataset. Load it and define the
+inputs before running the code on this page:</p>
+<pre class="r"><code>library(INFUSE)
+data(infuse_example)
+
+R_mat_list           &lt;- infuse_example$R_mat_list
+summary_stat_sd_list &lt;- infuse_example$summary_stat_sd_list
+annot_file_all       &lt;- infuse_example$annot_file_all
+ancestry_weight      &lt;- infuse_example$ancestry_weight</code></pre>
 <hr />
 <div id="why-use-functional-annotations" class="section level2">
 <h2>1. Why Use Functional Annotations?</h2>
@@ -737,8 +809,7 @@ class="section level2">
 <p>INFUSE parameterizes the prior causal probability for SNP <span
 class="math inline">\(j\)</span> under the <span
 class="math inline">\(\ell\)</span>-th single effect using a softmax
-over annotation features (see <a href="index.html">Statistical
-Framework</a>):</p>
+over annotation features:</p>
 <p><span class="math display">\[\pi_{\ell j} = \frac{\exp(\mathbf{A}_j^T
 \mathbf{w}_\ell)}{\displaystyle\sum_{j&#39;=1}^{m}
 \exp(\mathbf{A}_{j&#39;}^T \mathbf{w}_\ell)}\]</span></p>
@@ -872,31 +943,31 @@ Matrix products: default
 BLAS/LAPACK: /apps/spack/negishi/apps/openblas/0.3.21-gcc-12.2.0-lzvicim/lib/libopenblas_zenp-r0.3.21.so
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] stats     graphics  grDevices utils     datasets  methods   base
 
 other attached packages:
-[1] workflowr_1.7.2
+[1] INFUSE_0.0.2.9000
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.1.1        compiler_4.2.2    pillar_1.9.0      bslib_0.8.0      
- [5] later_1.3.2       git2r_0.36.2      jquerylib_0.1.4   tools_4.2.2      
- [9] getPass_0.2-4     digest_0.6.37     jsonlite_2.0.0    evaluate_1.0.5   
-[13] lifecycle_1.0.5   tibble_3.2.1      pkgconfig_2.0.3   rlang_1.2.0      
-[17] cli_3.6.3         rstudioapi_0.14   yaml_2.3.10       xfun_0.48        
-[21] fastmap_1.2.0     httr_1.4.7        stringr_1.5.1     knitr_1.48       
-[25] fs_2.0.1          vctrs_0.6.5       sass_0.4.9        rprojroot_2.1.1  
-[29] glue_1.8.0        R6_2.6.1          processx_3.8.7    fansi_1.0.6      
-[33] rmarkdown_2.28    callr_3.7.6       magrittr_2.0.3    whisker_0.4      
-[37] ps_1.9.2          promises_1.3.0    htmltools_0.5.8.1 httpuv_1.6.6     
-[41] utf8_1.2.4        stringi_1.8.4     cachem_1.1.0     </code></pre>
+ [1] Rcpp_1.1.1        nloptr_2.1.1      pillar_1.9.0      compiler_4.2.2
+ [5] bslib_0.8.0       later_1.3.2       jquerylib_0.1.4   git2r_0.36.2
+ [9] workflowr_1.7.2   tools_4.2.2       digest_0.6.37     gtable_0.3.6
+[13] lattice_0.20-45   jsonlite_2.0.0    evaluate_1.0.5    lifecycle_1.0.5
+[17] tibble_3.2.1      pkgconfig_2.0.3   rlang_1.2.0       Matrix_1.6-4
+[21] cli_3.6.3         yaml_2.3.10       xfun_0.48         fastmap_1.2.0
+[25] stringr_1.5.1     dplyr_1.1.4       knitr_1.48        generics_0.1.3
+[29] fs_2.0.1          vctrs_0.6.5       sass_0.4.9        grid_4.2.2
+[33] tidyselect_1.2.1  rprojroot_2.1.1   glue_1.8.0        R6_2.6.1
+[37] fansi_1.0.6       rmarkdown_2.28    mixsqp_0.3-54     irlba_2.3.5.1
+[41] ggplot2_3.5.2     magrittr_2.0.3    whisker_0.4       scales_1.3.0
+[45] promises_1.3.0    htmltools_0.5.8.1 colorspace_2.1-1  httpuv_1.6.6
+[49] utf8_1.2.4        stringi_1.8.4     munsell_0.5.1     cachem_1.1.0     </code></pre>
 </div>
 </div>
 </div>

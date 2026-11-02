@@ -11,7 +11,7 @@
 
 <meta name="author" content="Guangxin Chen" />
 
-<meta name="date" content="2026-04-10" />
+<meta name="date" content="2026-11-01" />
 
 <title>Running INFUSE</title>
 
@@ -351,7 +351,7 @@ div.tocify {
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        
+
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -363,7 +363,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Running INFUSE</h1>
 <h4 class="author">Guangxin Chen</h4>
-<h4 class="date">2026-04-10</h4>
+<h4 class="date">2026-11-01</h4>
 
 </div>
 
@@ -371,7 +371,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -382,8 +382,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -392,16 +392,16 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2026-05-20
+<strong>Last updated:</strong> 2026-11-01
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
-<strong>Knit directory:</strong> <code>INFUSE_website/</code> <span
+<strong>Knit directory:</strong> <code>site/</code> <span
 class="glyphicon glyphicon-question-sign" aria-hidden="true"
 title="This is the local directory in which the code in this file was executed.">
 </span>
@@ -421,21 +421,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -526,13 +523,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongf46ac6d">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtree07f88111840f0b0372ec792571acb85b767b44e1targetblank07f8811a">
 <span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Repository version:</strong> f46ac6d
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/gchen4422/INFUSE/tree/07f88111840f0b0372ec792571acb85b767b44e1" target="_blank">07f8811</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongf46ac6d"
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomgchen4422INFUSEtree07f88111840f0b0372ec792571acb85b767b44e1targetblank07f8811a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -541,7 +540,8 @@ and connecting the code version to the results is critical for
 reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version f46ac6d.
+The results in this page were generated with repository version
+<a href="https://github.com/gchen4422/INFUSE/tree/07f88111840f0b0372ec792571acb85b767b44e1" target="_blank">07f8811</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -555,25 +555,7 @@ depends on. Below is the status of the Git repository when the results
 were generated:
 </p>
 <pre><code>
-Ignored files:
-    Ignored:    .claude/
-    Ignored:    analysis/INFUSE.png
-
-Untracked files:
-    Untracked:  MAFPC_method_guangxin_revision_4.docx
-    Untracked:  analysis/Data_prepare.Rmd
-    Untracked:  analysis/Run_INFUSE.Rmd
-    Untracked:  analysis/annotation_integration.Rmd
-    Untracked:  analysis/custom.css
-    Untracked:  analysis/installation.Rmd
-    Untracked:  analysis/real_data_example.Rmd
-    Untracked:  build_site.R
-    Untracked:  code/data_prep_utils.R
-    Untracked:  code/plot_utils.R
-
-Unstaged changes:
-    Modified:   analysis/_site.yml
-
+working directory clean
 </code></pre>
 <p>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not
@@ -588,63 +570,318 @@ have uncommitted changes.
 </div>
 <div id="versions" class="tab-pane fade">
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/Run_INFUSE.Rmd</code>) and HTML
+(<code>docs/Run_INFUSE.html</code>) files. If you’ve configured a remote
+Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/07f88111840f0b0372ec792571acb85b767b44e1/analysis/Run_INFUSE.Rmd" target="_blank">07f8811</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Use ancestry-unique variant terminology in interpretation note
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/b7aad84f91983f10201466bf68e3c3a3befa77d7/docs/Run_INFUSE.html" target="_blank">b7aad84</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render input requirements and restored tuning guidance
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/e3da956df4c48e6d14658fd9708b74f98ba1bcef/analysis/Run_INFUSE.Rmd" target="_blank">e3da956</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Document summary-statistic requirements and restore tuning guidance
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/44c355cb574c4adfeccdb03fe70f97a9c99133db/docs/Run_INFUSE.html" target="_blank">44c355c</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Clean rendered tutorial formatting
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/3ef174e2464d3bd840982ab691645bc75a7a2709/docs/Run_INFUSE.html" target="_blank">3ef174e</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render simplified running tutorial and output definitions
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/4d12457daa59e33e5d248ad8a74313ca3fd2beec/analysis/Run_INFUSE.Rmd" target="_blank">4d12457</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Clarify configuration priors and simplify running tutorial
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/513311b3347d0833e2c5bc7e28eb4968a48bfa0d/docs/Run_INFUSE.html" target="_blank">513311b</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render original AoU locus workflow and manuscript model
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/6a7c1faf1e2cbff99b07b0105d49f3a00f7645b9/analysis/Run_INFUSE.Rmd" target="_blank">6a7c1fa</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Retain original AoU locus and align availability model with Methods
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/6204dba87dad2fd0950d32fd083594e963670313/docs/Run_INFUSE.html" target="_blank">6204dba</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Render updated union fine-mapping tutorials
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/a936b8346ca60e59d4902ffd535a9a4c15e8c702/analysis/Run_INFUSE.Rmd" target="_blank">a936b83</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-11-01
+</td>
+<td>
+Update tutorials for ancestry-specific variant availability
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/gchen4422/INFUSE/blob/23356cb2e808552f11c93b348e6edc5fd7e4df84/analysis/Run_INFUSE.Rmd" target="_blank">23356cb</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-06-10
+</td>
+<td>
+Add INFUSE website (workflowr project) on gh-pages branch
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/gchen4422/INFUSE/23356cb2e808552f11c93b348e6edc5fd7e4df84/docs/Run_INFUSE.html" target="_blank">23356cb</a>
+</td>
+<td>
+Guangxin Chen
+</td>
+<td>
+2026-06-10
+</td>
+<td>
+Add INFUSE website (workflowr project) on gh-pages branch
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
 </div>
 <div id="running-infuse_core" class="section level1">
 <h1>Running <code>infuse_core()</code></h1>
-<p>The primary function in INFUSE is <code>infuse_core()</code>. This
-page describes the required and optional inputs, how to format your
-data, and how to interpret the output.</p>
-<hr />
-<div id="input-data-format" class="section level2">
-<h2>1. Input Data Format</h2>
-<p>The example dataset is bundled with the package and can be loaded
-directly:</p>
+<p>This example fine-maps the same DBP locus on chromosome 20
+(58,658,279–59,673,534) used in <a href="Data_prepare.html">Data
+Preparation</a>, retaining both common and ancestry-unique variants.
+Install the current package version following <a
+href="installation.html">Installation</a>. Use the post-QC
+observed-input file created in Data Preparation; the controlled-access
+GWAS and LD inputs are not bundled with the website.</p>
+<div id="prepare-inputs" class="section level2">
+<h2>1. Prepare Inputs</h2>
 <pre class="r"><code>library(INFUSE)
-data(infuse_example)
+observed &lt;- readRDS(Sys.getenv(
+  &quot;INFUSE_AOU_EXAMPLE_INPUT&quot;, &quot;data/DBP_chr20_observed.rds&quot;
+))
 
-R_mat_list           &lt;- infuse_example$R_mat_list
-summary_stat_sd_list &lt;- infuse_example$summary_stat_sd_list
-annot_file_all       &lt;- infuse_example$annot_file_all
-ancestry_weight      &lt;- infuse_example$ancestry_weight</code></pre>
-<div id="ld-matrices-r_mat_list" class="section level3">
-<h3>1.1 LD Matrices (<code>R_mat_list</code>)</h3>
-<p><code>R_mat_list</code> is a <strong>named list</strong> of
-ancestry-specific LD correlation matrices. Each matrix must be:</p>
-<ul>
-<li>Square and symmetric (<span class="math inline">\(p \times
-p\)</span>)</li>
-<li>Row names and column names set to SNP identifiers (rsID or
-<code>chr:pos</code>)</li>
-<li>Contain values in <span class="math inline">\([-1, 1]\)</span>
-(correlation, not covariance)</li>
-</ul>
-<p>In the example dataset, <code>R_mat_list</code> contains two
-ancestries (EUR and AFR), each with a <span class="math inline">\(1432
-\times 1432\)</span> LD matrix:</p>
-<pre class="r"><code>lapply(R_mat_list, dim)
-# $EUR
-# [1] 1432 1432
-#
-# $AFR
-# [1] 1432 1432</code></pre>
-<blockquote>
-<p><strong>Important:</strong> SNP ordering within each LD matrix must
-exactly match the ordering of rows in the corresponding summary
-statistics data frame.</p>
-</blockquote>
+prep &lt;- prepare_infuse_union(
+  summary_stat_list = observed$summary_stat_list,
+  R_mat_list = observed$R_mat_list,
+  annot = observed$annot,
+  annot_ids = rownames(observed$annot),
+  union_ids = observed$union_ids,
+  allele_ref = observed$allele_ref,
+  ld_allele_coding = &quot;ancestry_effect&quot;,
+  require_complete_ld_dimnames = TRUE
+)</code></pre>
+<div id="input-format" class="section level3">
+<h3>Input Format</h3>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Input</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><code>prep$R_mat_list</code></td>
+<td align="left">Named list of ancestry-specific LD matrices, aligned to
+the 2,890 union variants</td>
+</tr>
+<tr class="even">
+<td align="left"><code>prep$summary_stat_list</code></td>
+<td align="left">Named list of summary-statistic data frames with
+<code>SNP</code>, <code>Beta</code>, <code>Se</code>, <code>Z</code>,
+and <code>N</code>, in the same SNP order as the LD matrices</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>prep$annot</code></td>
+<td align="left">2,890 × 186 annotation matrix, aligned to the union
+SNPs</td>
+</tr>
+<tr class="even">
+<td align="left"><code>prep$variant_available</code></td>
+<td align="left">Logical SNP-by-ancestry matrix specifying where each
+SNP is available</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="summary-statistics-summary_stat_sd_list"
-class="section level3">
-<h3>1.2 Summary Statistics (<code>summary_stat_sd_list</code>)</h3>
-<p><code>summary_stat_sd_list</code> is a <strong>named list</strong> of
-data frames, one per ancestry. Each data frame contains the following
-columns:</p>
+<div id="summary-statistic-columns" class="section level3">
+<h3>Summary-Statistic Columns</h3>
+<p>Column names are <strong>case-sensitive</strong>: use
+<code>Beta</code> and <code>Se</code>, not <code>BETA</code> and
+<code>SE</code>. Both <code>infuse_core()</code> and
+<code>prepare_infuse_union()</code> require the five fitting columns
+below; <code>Beta</code>, <code>Se</code>, <code>Z</code>, and
+<code>N</code> must be numeric and finite.</p>
 <table>
 <colgroup>
 <col width="33%" />
@@ -662,186 +899,110 @@ columns:</p>
 <tr class="odd">
 <td align="left"><code>SNP</code></td>
 <td align="left">Yes</td>
-<td align="left">Variant identifier (rsID or <code>chr:pos</code>). Must
-match LD matrix row/column names.</td>
+<td align="left">Unique variant identifier matching the LD matrix SNP
+names</td>
 </tr>
 <tr class="even">
 <td align="left"><code>Beta</code></td>
 <td align="left">Yes</td>
-<td align="left">Effect size estimate (log-OR for binary, linear
-coefficient for quantitative traits).</td>
+<td align="left">Effect-size estimate for the effect allele</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>Se</code></td>
 <td align="left">Yes</td>
-<td align="left">Standard error of the effect size.</td>
+<td align="left">Standard error of <code>Beta</code>; must be
+positive</td>
 </tr>
 <tr class="even">
 <td align="left"><code>Z</code></td>
-<td align="left">Recommended</td>
-<td align="left">Z-score (<span class="math inline">\(\text{Beta} /
-\text{Se}\)</span>).</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>CHR</code></td>
-<td align="left">Recommended</td>
-<td align="left">Chromosome number.</td>
-</tr>
-<tr class="even">
-<td align="left"><code>POS</code></td>
-<td align="left">Recommended</td>
-<td align="left">Base pair position (GRCh38 for this example data).</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>ALT</code> / <code>REF</code></td>
-<td align="left">Recommended</td>
-<td align="left">Effect and reference alleles.</td>
-</tr>
-<tr class="even">
-<td align="left"><code>MAF</code></td>
-<td align="left">Optional</td>
-<td align="left">Minor allele frequency in the study sample.</td>
+<td align="left">Yes</td>
+<td align="left">Z-score, consistent with <code>Beta / Se</code></td>
 </tr>
 <tr class="odd">
 <td align="left"><code>N</code></td>
-<td align="left">Optional</td>
-<td align="left">Per-variant sample size.</td>
+<td align="left">Yes</td>
+<td align="left">Per-variant GWAS sample size; must be greater than
+2</td>
 </tr>
 <tr class="even">
-<td align="left"><code>INFO</code></td>
-<td align="left">Optional</td>
-<td align="left">Imputation quality score.</td>
+<td align="left"><code>A1</code>, <code>A2</code></td>
+<td align="left">For allele harmonization</td>
+<td align="left">Effect and non-effect alleles; required in this example
+because <code>allele_ref</code> is supplied to
+<code>prepare_infuse_union()</code></td>
+</tr>
+<tr class="odd">
+<td align="left"><code>CHR</code>, <code>POS</code></td>
+<td align="left">No</td>
+<td align="left">Chromosome and position, used for regional selection or
+plotting</td>
+</tr>
+<tr class="even">
+<td align="left"><code>PVAL</code></td>
+<td align="left">No</td>
+<td align="left">GWAS P-value, used for filtering or plotting</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>MAF</code>, <code>INFO</code></td>
+<td align="left">No</td>
+<td align="left">Allele-frequency and imputation-quality metadata, used
+for QC</td>
 </tr>
 </tbody>
 </table>
-<p>In the example dataset, each ancestry data frame has 1,432 SNPs on
-chromosome 1 (positions ~7.9–9.5 Mb) with 13 columns:</p>
-<pre class="r"><code>lapply(summary_stat_sd_list, colnames)
-# $EUR
-#  [1] &quot;SNP&quot;  &quot;CHR&quot;  &quot;POS&quot;  &quot;PVAL&quot; &quot;ALT&quot;  &quot;REF&quot;  &quot;N&quot;    &quot;Z&quot;    &quot;Beta&quot; &quot;Se&quot;   &quot;INFO&quot; &quot;MAF&quot;  &quot;CHR_POS&quot;
-#
-# $AFR
-#  [1] &quot;SNP&quot;  &quot;CHR&quot;  &quot;POS&quot;  &quot;PVAL&quot; &quot;ALT&quot;  &quot;REF&quot;  &quot;N&quot;    &quot;Z&quot;    &quot;Beta&quot; &quot;Se&quot;   &quot;INFO&quot; &quot;MAF&quot;  &quot;CHR_POS&quot;
+<p>Data Preparation renames the AoU <code>ALT</code>/<code>REF</code>
+columns to <code>A1</code>/<code>A2</code>. These two allele columns are
+not required by <code>infuse_core()</code> itself. For inputs already
+harmonized externally, <code>prepare_infuse_union()</code> can skip
+allele harmonization only when both columns are omitted from every
+ancestry and <code>allele_ref = NULL</code>.</p>
+<pre class="r"><code>lapply(prep$R_mat_list, dim)</code></pre>
+<pre><code>$EUR
+[1] 2890 2890
 
-lapply(summary_stat_sd_list, function(x) head(x, 3))
-# $EUR
-#         SNP CHR POS PVAL ALT REF N Z Beta Se INFO MAF CHR_POS
-# 1: rs9434555 1 7921393 0.6696394 C T 193593 -0.4266430 -0.00140069 0.003283050 1 0.368389 1_7921393
-# 2:  rs226480 1 7921592 0.3748737 T C 191483 -0.8873812 -0.00886010 0.009984548 1 0.973708 1_7921592
-# 3:  rs161827 1 7921974 0.4273739 T C 193597 -0.7936935 -0.00813568 0.010250406 1 0.975426 1_7921974
-#
-# $AFR
-#         SNP CHR POS PVAL ALT REF N Z Beta Se INFO MAF CHR_POS
-# 1: rs9434555 1 7921393 0.9527928 C T 60760 -0.05920003 -0.000347323 0.00586694 1 0.672251 1_7921393
-# 2:  rs226480 1 7921592 0.4111331 T C 61046 -0.82190129 -0.004663320 0.00567382 1 0.393163 1_7921592
-# 3:  rs161827 1 7921974 0.8207533 T C 61158  0.22657622  0.001453670 0.00641581 1 0.760514 1_7921974</code></pre>
-<p>Note that EUR has ~193,593 and AFR has ~60,760 samples per variant,
-reflecting typical multi-ancestry GWAS sample size differences.</p>
+$AFR
+[1] 2890 2890</code></pre>
+<pre class="r"><code>vapply(prep$summary_stat_list, nrow, integer(1))</code></pre>
+<pre><code> EUR  AFR
+2890 2890 </code></pre>
+<pre class="r"><code>dim(prep$annot)</code></pre>
+<pre><code>[1] 2890  186</code></pre>
+<pre class="r"><code>colSums(prep$variant_available)</code></pre>
+<pre><code> EUR  AFR
+2108 2649 </code></pre>
+<p>Each ancestry now has 2,890 aligned input rows, but only the entries
+marked available contribute to its likelihood. For analyses in which
+every SNP is available in every ancestry, the original common-variant
+inputs remain supported with <code>variant_available = NULL</code>.</p>
 </div>
-<div id="annotation-matrix-annot" class="section level3">
-<h3>1.3 Annotation Matrix (<code>annot</code>)</h3>
-<p><code>annot</code> is a SNP <span
-class="math inline">\(\times\)</span> feature matrix of functional
-annotation values passed as <code>as.matrix()</code>. Rows correspond to
-SNPs (in the same order as <code>summary_stat_sd_list</code>), columns
-are annotation features.</p>
-<p>In the example dataset, <code>annot_file_all</code> has 1,432 SNPs
-and 186 annotation features drawn from BaselineLF reference from PolyFun
-(<a href="https://www.nature.com/articles/s41588-020-00735-5">Weissbrod
-et al., 2022</a>).</p>
-<pre class="r"><code>dim(annot_file_all)
-# [1] 1432  186
-
-colnames(annot_file_all)[1:10]
-#  [1] &quot;Coding_UCSC_lowfreq&quot;                        &quot;Coding_UCSC_common&quot;
-#  [3] &quot;Coding_UCSC.flanking.500_lowfreq&quot;           &quot;Coding_UCSC.flanking.500_common&quot;
-#  [5] &quot;Conserved_LindbladToh_lowfreq&quot;              &quot;Conserved_LindbladToh_common&quot;
-#  [7] &quot;Conserved_LindbladToh.flanking.500_lowfreq&quot; &quot;Conserved_LindbladToh.flanking.500_common&quot;
-#  [9] &quot;CTCF_Hoffman_lowfreq&quot;                       &quot;CTCF_Hoffman_common&quot;</code></pre>
-<p>If <code>annot</code> is <code>NULL</code>, INFUSE falls back to a
-uniform prior (equivalent to MESuSiE behavior).</p>
-</div>
-<div id="ancestry-weights-ancestry_weight" class="section level3">
-<h3>1.4 Ancestry Weights (<code>ancestry_weight</code>)</h3>
-<p><code>ancestry_weight</code> is a numeric vector that controls the
-relative contribution of ancestry-specific versus shared causal signals
-in the model. The vector has three elements corresponding to the weight
-on EUR-specific, AFR-specific, and shared signals respectively, and
-should sum to 1.</p>
-<p>The ratio of ancestry-specific to shared weights governs how strongly
-the model favors ancestry-specific causal SNP detection over shared
-signals. In the example dataset, we set a 3:1 ratio of ancestry-specific
-to shared (i.e., <code>c(3, 3, 1)</code> normalized), encouraging
-detection of ancestry-specific causal variants:</p>
-<pre class="r"><code>print(ancestry_weight)
-# [1] 0.4285714 0.4285714 0.1428571   # = c(3, 3, 1) / sum(c(3, 3, 1))</code></pre>
-<p>The table below summarizes common configurations:</p>
-<table>
-<colgroup>
-<col width="33%" />
-<col width="33%" />
-<col width="33%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Scenario</th>
-<th align="left">Setting</th>
-<th align="left">Interpretation</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Pure shared signal</td>
-<td align="left"><code>c(0, 0, 1)</code></td>
-<td align="left">All weight on shared component; no ancestry-specific
-detection</td>
-</tr>
-<tr class="even">
-<td align="left">Balanced</td>
-<td align="left"><code>c(1, 1, 1) / 3</code></td>
-<td align="left">Equal weight on EUR-specific, AFR-specific, and
-shared</td>
-</tr>
-<tr class="odd">
-<td align="left">Encourage ancestry-specific (default)</td>
-<td align="left"><code>c(3, 3, 1) / sum(c(3, 3, 1))</code></td>
-<td align="left">3:1 ratio favoring ancestry-specific signals</td>
-</tr>
-<tr class="even">
-<td align="left">Strong ancestry-specific</td>
-<td align="left"><code>c(5, 5, 1) / sum(c(5, 5, 1))</code></td>
-<td align="left">5:1 ratio; use when ancestry-specific effects are
-expected to dominate</td>
-</tr>
-</tbody>
-</table>
-<p>If your GWAS locus is known to harbor population-specific signals
-(e.g., driven by ancestry-specific LD patterns or allele frequencies),
-increase the ancestry-specific weights. If you expect a single shared
-causal variant across all ancestries, reduce the ancestry-specific
-weights or use <code>c(0, 0, 1)</code>.</p>
-<hr />
+<div id="ancestry-configuration-weights" class="section level3">
+<h3>Ancestry Configuration Weights</h3>
+<p><code>ancestry_weight</code> specifies prior weights on ancestry
+configurations. For <strong>common variants</strong>, the default
+two-ancestry weights are <code>c(3, 3, 1)/7</code>: the two
+ancestry-specific configurations followed by the shared configuration.
+Configuration names identify the corresponding ancestries.</p>
+<p>For <strong>ancestry-unique variants</strong>, the configuration for
+the ancestry in which the variant is available has prior probability 1.
+EUR-only variants are restricted to the EUR configuration, and AFR-only
+variants to AFR.</p>
 </div>
 </div>
-<div id="running-infuse_core-1" class="section level2">
-<h2>2. Running <code>infuse_core()</code></h2>
-<pre class="r"><code>library(INFUSE)
-
-result &lt;- infuse_core(
-  R_mat_list                 = R_mat_list,
-  summary_stat_list          = summary_stat_sd_list,
-  L                          = 10,
-  residual_variance          = NULL,
-  ancestry_weight            = ancestry_weight,
-  optim_method               = &quot;optim&quot;,
-  estimate_residual_variance = FALSE,
-  max_iter                   = 100,
-  annot                      = as.matrix(annot_file_all),
-  annot_method               = &quot;mlk&quot;
-)
-# Total time used for the analysis: ~7 mins</code></pre>
-<div id="parameter-reference" class="section level3">
-<h3>Parameter Reference</h3>
+<div id="fit-the-model" class="section level2">
+<h2>2. Fit the Model</h2>
+<pre class="r"><code>result &lt;- infuse_core(
+  R_mat_list = prep$R_mat_list,
+  summary_stat_list = prep$summary_stat_list,
+  L = 10,
+  annot = prep$annot,
+  annot_method = &quot;mlk&quot;,
+  variant_available = prep$variant_available,
+  verbose = FALSE
+)</code></pre>
+<p><code>verbose = FALSE</code> suppresses routine progress output. It
+does not change the fitted model.</p>
+<div id="parameters-used-in-this-example" class="section level3">
+<h3>Parameters Used in This Example</h3>
 <table>
 <colgroup>
 <col width="33%" />
@@ -851,148 +1012,180 @@ result &lt;- infuse_core(
 <thead>
 <tr class="header">
 <th align="left">Parameter</th>
-<th align="left">Default</th>
+<th align="left">Setting</th>
 <th align="left">Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td align="left"><code>R_mat_list</code></td>
-<td align="left">—</td>
-<td align="left">Named list of LD matrices (required)</td>
+<td align="left"><code>prep$R_mat_list</code></td>
+<td align="left">Ancestry-specific LD correlation matrices</td>
 </tr>
 <tr class="even">
 <td align="left"><code>summary_stat_list</code></td>
-<td align="left">—</td>
-<td align="left">Named list of summary stat data frames (required)</td>
+<td align="left"><code>prep$summary_stat_list</code></td>
+<td align="left">Aligned ancestry-specific summary statistics; see the
+column requirements above</td>
 </tr>
 <tr class="odd">
-<td align="left"><code>annot</code></td>
-<td align="left">—</td>
-<td align="left">SNP <span class="math inline">\(\times\)</span> feature
-matrix of functional annotation values</td>
-</tr>
-<tr class="even">
 <td align="left"><code>L</code></td>
 <td align="left"><code>10</code></td>
-<td align="left">Maximum number of causal signals to model</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>residual_variance</code></td>
-<td align="left"><code>NULL</code></td>
-<td align="left">Fixed residual variance; <code>NULL</code> estimates
-from data</td>
-</tr>
-<tr class="even">
-<td align="left"><code>ancestry_weight</code></td>
-<td align="left"><code>NULL</code></td>
-<td align="left">Named numeric vector weighting each ancestry’s
-contribution</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>optim_method</code></td>
-<td align="left"><code>"optim"</code></td>
-<td align="left">Optimization algorithm: <code>"optim"</code> or
-<code>"L-BFGS-B"</code></td>
-</tr>
-<tr class="even">
-<td align="left"><code>estimate_residual_variance</code></td>
-<td align="left"><code>FALSE</code></td>
-<td align="left">Whether to estimate residual variance; set
-<code>FALSE</code> for summary statistics</td>
-</tr>
-<tr class="odd">
-<td align="left"><code>max_iter</code></td>
-<td align="left"><code>100</code></td>
-<td align="left">Maximum ELBO optimization iterations</td>
+<td align="left">Maximum number of single-effect signals</td>
 </tr>
 <tr class="even">
 <td align="left"><code>annot</code></td>
-<td align="left"><code>NULL</code></td>
-<td align="left">SNP × feature annotation matrix (pass as
-<code>as.matrix()</code>)</td>
+<td align="left"><code>prep$annot</code></td>
+<td align="left">SNP-by-feature functional annotation matrix</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>annot_method</code></td>
 <td align="left"><code>"mlk"</code></td>
-<td align="left">Annotation weight estimation method: <code>"mlk"</code>
-(sparse PCA) or <code>"glm"</code></td>
+<td align="left">Integrate high-dimensional annotations through sparse
+PCA</td>
+</tr>
+<tr class="even">
+<td align="left"><code>variant_available</code></td>
+<td align="left"><code>prep$variant_available</code></td>
+<td align="left">Availability of common and ancestry-unique variants in
+each ancestry</td>
+</tr>
+<tr class="odd">
+<td align="left"><code>verbose</code></td>
+<td align="left"><code>FALSE</code></td>
+<td align="left">Suppress routine progress output</td>
 </tr>
 </tbody>
 </table>
-<hr />
 </div>
 </div>
-<div id="output-interpretation" class="section level2">
-<h2>3. Output Interpretation</h2>
-<div id="posterior-inclusion-probabilities-pip" class="section level3">
-<h3>3.1 Posterior Inclusion Probabilities (<code>$pip</code>)</h3>
-<p>A numeric vector of length <span class="math inline">\(p\)</span>
-giving the posterior inclusion probability (PIP) for each SNP — the
-probability that the SNP is causal in at least one ancestry.</p>
-<p>A common discovery threshold is PIP <span class="math inline">\(&gt;
-0.5\)</span>. In the example dataset, one SNP exceeds this
-threshold:</p>
-<pre class="r"><code>head(result$pip, 10)
-#  [1] 0.0006983240 0.0007671212 0.0012176492 0.0006983240 0.0006983240
-#  [6] 0.0007382932 0.0006983240 0.0006983240 0.0007895883 0.0006983240
+<div id="interpret-results" class="section level2">
+<h2>3. Interpret Results</h2>
+<div id="either-ancestry-pips" class="section level3">
+<h3>Either-Ancestry PIPs</h3>
+<p>The <strong>posterior inclusion probability (PIP)</strong> describes
+the posterior support that a variant is causal. <code>result$pip</code>
+reports support for an effect in at least one ancestry, for both common
+and ancestry-unique variants. Values range from 0 to 1, with higher PIPs
+indicating stronger support. The table below ranks variants by these
+PIPs.</p>
+<pre class="r"><code>pip_table &lt;- data.frame(
+  SNP = prep$summary_stat_list[[1]]$SNP,
+  PIP_either = as.numeric(result$pip),
+  available_EUR = prep$variant_available[, &quot;EUR&quot;],
+  available_AFR = prep$variant_available[, &quot;AFR&quot;]
+)
+pip_table &lt;- pip_table[order(pip_table$PIP_either, decreasing = TRUE), ]
+head(pip_table, 10)</code></pre>
+<pre><code>                    SNP PIP_either available_EUR available_AFR
+rs185799410 rs185799410 0.38985485          TRUE         FALSE
+rs73306876   rs73306876 0.10479476          TRUE          TRUE
+rs6026740     rs6026740 0.10231727          TRUE          TRUE
+rs6026742     rs6026742 0.09156925          TRUE          TRUE
+rs11906755   rs11906755 0.05696710          TRUE          TRUE
+rs2145477     rs2145477 0.04652363          TRUE          TRUE
+rs6026748     rs6026748 0.04420751          TRUE          TRUE
+rs1465537     rs1465537 0.04076873          TRUE          TRUE
+rs80221690   rs80221690 0.03607715          TRUE          TRUE
+rs6015375     rs6015375 0.03423316          TRUE          TRUE</code></pre>
+</div>
+<div id="configuration-specific-pips" class="section level3">
+<h3>Configuration-Specific PIPs</h3>
+<p><code>result$pip_config</code> provides PIPs for ancestry-specific
+and shared configurations. Read configuration names from the result
+rather than assuming an ancestry order.</p>
+<pre class="r"><code>result$availability$config_names</code></pre>
+<pre><code>[1] &quot;EUR&quot;     &quot;AFR&quot;     &quot;EUR+AFR&quot;</code></pre>
+<pre class="r"><code>head(result$pip_config[order(result$pip, decreasing = TRUE), , drop = FALSE])</code></pre>
+<pre><code>                   EUR          AFR     EUR+AFR
+rs185799410 0.38985485 0.0000000000 0.000000000
+rs73306876  0.09758776 0.0001482946 0.007206972
+rs6026740   0.09534819 0.0001482946 0.006969052
+rs6026742   0.08520159 0.0001482946 0.006367636
+rs11906755  0.03110823 0.0001482946 0.025858802
+rs2145477   0.03460783 0.0001482946 0.011864749</code></pre>
+<p><strong>For an ancestry-unique variant, configuration-specific
+support is restricted to the ancestry in which it is available. This
+does not establish that the variant lacks a biological effect in the
+other ancestry.</strong></p>
+</div>
+<div id="credible-sets" class="section level3">
+<h3>Credible Sets</h3>
+<p>A <strong>95% credible set (CS)</strong> contains variants whose
+cumulative posterior probability for a single causal signal reaches at
+least 0.95. Smaller sets indicate finer resolution. INFUSE retains sets
+that meet the selected LD-purity criterion.</p>
+<p><code>result$cs$cs</code> contains SNP indices into the prepared
+inputs. <code>purity</code> summarizes within-set absolute LD
+correlations, and <code>coverage</code> is the cumulative posterior
+probability captured by each set. The second command below converts SNP
+indices to variant IDs.</p>
+<pre class="r"><code>result$cs</code></pre>
+<pre><code>$cs
+$cs$L1
+ [1] 1208 1212 1226 1229 1249 1251 1252 1253 1254 1255 1257 1263 1275 1276 1282
+[16] 1287 1291 1292 1309 1313 1314 1317 1318 1319 1320 1324 1325 1326 1328 1329
+[31] 1330 1332 1335 1339 1340 1348 1349 1350 1351 1353 1358 1362 1363 1364 1367
+[46] 1372 1378 1396 1401
 
-# High-confidence causal candidate
-names(result$pip)[result$pip &gt; 0.5]
-# Potential causal SNPs with PIP &gt; 0.5:  rs301807</code></pre>
+
+$purity
+   min.abs.corr mean.abs.corr median.abs.corr
+L1    0.6661335     0.9331542       0.9556504
+
+$cs_index
+[1] 1
+
+$coverage
+[1] 0.9506483
+
+$requested_coverage
+[1] 0.95</code></pre>
+<pre class="r"><code>lapply(result$cs$cs, function(i) prep$summary_stat_list[[1]]$SNP[i])</code></pre>
+<pre><code>$L1
+ [1] &quot;rs6026702&quot;   &quot;rs7362597&quot;   &quot;rs6100340&quot;   &quot;rs80221690&quot;  &quot;rs76294178&quot;
+ [6] &quot;rs1465537&quot;   &quot;rs76333603&quot;  &quot;rs76379422&quot;  &quot;rs6100342&quot;   &quot;rs882384&quot;
+[11] &quot;rs998981&quot;    &quot;rs56128044&quot;  &quot;rs74585165&quot;  &quot;rs7267618&quot;   &quot;rs111269340&quot;
+[16] &quot;rs79328254&quot;  &quot;rs80154324&quot;  &quot;rs8116295&quot;   &quot;rs6026728&quot;   &quot;rs75339815&quot;
+[21] &quot;rs73306860&quot;  &quot;rs80271186&quot;  &quot;rs78628461&quot;  &quot;rs76828114&quot;  &quot;rs6026729&quot;
+[26] &quot;rs6026731&quot;   &quot;rs6026732&quot;   &quot;rs6026733&quot;   &quot;rs77543692&quot;  &quot;rs75245746&quot;
+[31] &quot;rs77909999&quot;  &quot;rs77882141&quot;  &quot;rs11906755&quot;  &quot;rs78412528&quot;  &quot;rs78302204&quot;
+[36] &quot;rs73306874&quot;  &quot;rs73306876&quot;  &quot;rs6026740&quot;   &quot;rs78846039&quot;  &quot;rs6026742&quot;
+[41] &quot;rs78638275&quot;  &quot;rs11908189&quot;  &quot;rs6026747&quot;   &quot;rs6026748&quot;   &quot;rs73306888&quot;
+[46] &quot;rs73306896&quot;  &quot;rs6015450&quot;   &quot;rs16982520&quot;  &quot;rs73309006&quot; </code></pre>
 </div>
-<div id="credible-sets-cs" class="section level3">
-<h3>3.2 Credible Sets (<code>$cs</code>)</h3>
-<p>A list containing 95% credible sets — groups of SNPs whose cumulative
-PIP exceeds 0.95 — along with purity statistics (minimum, mean, and
-median absolute pairwise LD correlation within each set).</p>
-<p>In the example dataset, one credible set is identified (L1)
-containing 4 SNPs at indices 916, 918, 922, and 927, with very high
-purity (minimum <span class="math inline">\(|r| = 0.991\)</span>):</p>
-<pre class="r"><code>result$cs
-# $cs
-# $cs$L1
-# [1] 916 918 922 927
-#
-# $purity
-#    min.abs.corr mean.abs.corr median.abs.corr
-# L1    0.9913705     0.9967612       0.9982714
-#
-# $coverage
-# [1] 0.9865202        # actual coverage (≥ requested 0.95)
-#
-# $requested_coverage
-# [1] 0.95</code></pre>
-<p><strong>Interpreting purity:</strong> All four SNPs in L1 have
-pairwise <span class="math inline">\(|r| &gt; 0.99\)</span>, indicating
-they are in near-perfect LD. This is a high-confidence, well-resolved
-credible set.</p>
-</div>
-<div id="single-effect-posteriors-alpha" class="section level3">
-<h3>3.3 Single-Effect Posteriors (<code>$alpha</code>)</h3>
-<p>An <span class="math inline">\(L \times p\)</span> matrix where
-<code>alpha[l, j]</code> is the posterior probability that the <span
-class="math inline">\(\ell\)</span>-th causal signal is driven by SNP
-<span class="math inline">\(j\)</span>. Rows sum to 1 within each effect
-<span class="math inline">\(\ell\)</span>.</p>
-<pre class="r"><code>dim(result$alpha)
-# [1]   10 1432   (L=10 effects x 1432 SNPs)</code></pre>
-</div>
-<div id="top-annotation-weights" class="section level3">
-<h3>3.4 Top Annotation Weights</h3>
-<p>During model fitting, INFUSE reports the top-ranked annotation
-features for each effect. For effect L=1 in the example, the most
-enriched annotations are:</p>
-<pre><code>CpG_Content_50kb_lowfreq                   11.578
-Backgrd_Selection_Stat_common               3.832
-Human_Promoter_Villar_common                2.228
-Human_Promoter_Villar_ExAC.flanking.500     2.064
-Coding_UCSC_common                          1.724
-Transcr_Hoffman_common                      1.584</code></pre>
-<p>These suggest the causal signal at this locus is enriched in
-CpG-dense regions and human promoter annotations, consistent with a
-regulatory mechanism.</p>
-<hr />
+<div id="annotation-weights" class="section level3">
+<h3>Annotation Weights</h3>
+<p><code>result$annot_weights</code> stores the estimated annotation
+weights for each effect. See <a
+href="annotation_integration.html">Annotation Integration</a> for
+details of the annotation-prior model.</p>
+<pre class="r"><code>length(result$annot_weights)</code></pre>
+<pre><code>[1] 10</code></pre>
+<pre class="r"><code># Annotation weights for the first single-effect component.
+weights_L1 &lt;- result$annot_weights[[1]]
+if (is.null(names(weights_L1))) names(weights_L1) &lt;- colnames(prep$annot)
+head(sort(weights_L1, decreasing = TRUE), 10)</code></pre>
+<pre><code>                   CpG_Content_50kb_common
+                              20.362852833
+                      H3K9ac_Trynka_common
+                               0.849564926
+                     H3K4me3_Trynka_common
+                               0.845586635
+              Human_Promoter_Villar_common
+                               0.658127222
+                       H3K27ac_PGC2_common
+                               0.165208087
+                        TSS_Hoffman_common
+                               0.089072837
+          Nucleotide_Diversity_10kb_common
+                               0.009386712
+          Coding_UCSC.flanking.500_lowfreq
+                               0.000000000
+           Coding_UCSC.flanking.500_common
+                               0.000000000
+Conserved_LindbladToh.flanking.500_lowfreq
+                               0.000000000 </code></pre>
 </div>
 </div>
 <div id="tuning-parameters" class="section level2">
@@ -1008,12 +1201,12 @@ only 1–2 signals, <code>L = 5</code> is sufficient.</p>
 <h3>Annotation method</h3>
 <ul>
 <li><strong><code>mlk</code></strong>: Recommended. When the annotation
-matrix contains many features (&gt;15), this method applies sparse PCA
-to obtain a lower-dimensional representation before estimating
-annotation weights. Otherwise, it estimates the weights by directly
-maximizing the joint likelihood without sparse PCA.</li>
-<li><strong><code>glm</code></strong>: Not recommended; included mainly
-for benchmarking purposes.</li>
+matrix contains at least 15 features, this method applies sparse PCA to
+obtain a lower-dimensional representation before estimating annotation
+weights. Otherwise, it estimates the weights by directly maximizing the
+joint likelihood without sparse PCA.</li>
+<li><strong><code>glmnet</code></strong>: Not recommended; included
+mainly for benchmarking purposes.</li>
 </ul>
 <br>
 <p>
@@ -1032,31 +1225,33 @@ Matrix products: default
 BLAS/LAPACK: /apps/spack/negishi/apps/openblas/0.3.21-gcc-12.2.0-lzvicim/lib/libopenblas_zenp-r0.3.21.so
 
 locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
- [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C
 
 attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
+[1] stats     graphics  grDevices utils     datasets  methods   base
 
 other attached packages:
-[1] workflowr_1.7.2
+[1] INFUSE_0.0.2.9000
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.1.1        compiler_4.2.2    pillar_1.9.0      bslib_0.8.0      
- [5] later_1.3.2       git2r_0.36.2      jquerylib_0.1.4   tools_4.2.2      
- [9] getPass_0.2-4     digest_0.6.37     jsonlite_2.0.0    evaluate_1.0.5   
-[13] lifecycle_1.0.5   tibble_3.2.1      pkgconfig_2.0.3   rlang_1.2.0      
-[17] cli_3.6.3         rstudioapi_0.14   yaml_2.3.10       xfun_0.48        
-[21] fastmap_1.2.0     httr_1.4.7        stringr_1.5.1     knitr_1.48       
-[25] fs_2.0.1          vctrs_0.6.5       sass_0.4.9        rprojroot_2.1.1  
-[29] glue_1.8.0        R6_2.6.1          processx_3.8.7    fansi_1.0.6      
-[33] rmarkdown_2.28    callr_3.7.6       magrittr_2.0.3    whisker_0.4      
-[37] ps_1.9.2          promises_1.3.0    htmltools_0.5.8.1 httpuv_1.6.6     
-[41] utf8_1.2.4        stringi_1.8.4     cachem_1.1.0     </code></pre>
+ [1] progress_1.2.3    elasticnet_1.3    tidyselect_1.2.1  xfun_0.48
+ [5] bslib_0.8.0       lattice_0.20-45   colorspace_2.1-1  vctrs_0.6.5
+ [9] generics_0.1.3    htmltools_0.5.8.1 yaml_2.3.10       utf8_1.2.4
+[13] rlang_1.2.0       mixsqp_0.3-54     jquerylib_0.1.4   later_1.3.2
+[17] pillar_1.9.0      nloptr_2.1.1      glue_1.8.0        lifecycle_1.0.5
+[21] stringr_1.5.1     munsell_0.5.1     gtable_0.3.6      workflowr_1.7.2
+[25] evaluate_1.0.5    knitr_1.48        fastmap_1.2.0     httpuv_1.6.6
+[29] irlba_2.3.5.1     fansi_1.0.6       lars_1.3          Rcpp_1.1.1
+[33] promises_1.3.0    scales_1.3.0      cachem_1.1.0      jsonlite_2.0.0
+[37] fs_2.0.1          ggplot2_3.5.2     hms_1.1.3         digest_0.6.37
+[41] stringi_1.8.4     dplyr_1.1.4       rprojroot_2.1.1   grid_4.2.2
+[45] cli_3.6.3         tools_4.2.2       magrittr_2.0.3    sass_0.4.9
+[49] tibble_3.2.1      crayon_1.5.3      whisker_0.4       pkgconfig_2.0.3
+[53] Matrix_1.6-4      prettyunits_1.2.0 rmarkdown_2.28    R6_2.6.1
+[57] git2r_0.36.2      compiler_4.2.2   </code></pre>
 </div>
 </div>
 </div>

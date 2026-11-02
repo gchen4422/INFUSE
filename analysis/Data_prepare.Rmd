@@ -1,7 +1,7 @@
 ---
 title: "Data Preparation"
 author: "Guangxin Chen"
-date: "2026-04-10"
+date: "2026-11-01"
 output: workflowr::wflow_html
 editor_options:
   chunk_output_type: console
@@ -18,11 +18,13 @@ We provide a streamlined pipeline to prepare input data for INFUSE, using **All 
 
 1. **GWAS Harmonization:** QC and filtering.
 2. **LD Reference Construction:** Extracting matched genotype data from 1000 Genomes (1KG, GRCh38).
-3. **LD Mismatch Detection:** Iterative pruning of variants with inconsistent LD patterns using `kriging_rss`.
+3. **LD Mismatch Detection:** Pruning inconsistent variants separately within each ancestry.
+4. **Variant Harmonization:** Harmonizing alleles and aligning ancestry-specific inputs for INFUSE.
 
-All helper functions used below are defined in `code/data_prep_utils.R` and loaded in the setup chunk.
+All helper functions used below are defined in [`code/data_prep_utils.R`](https://github.com/gchen4422/INFUSE/blob/gh-pages/code/data_prep_utils.R) and loaded in the setup chunk. The input paths identify the AoU/1KG resources; substitute your own locations. New files are written under `aou_union_example/`.
 
 ```{r setup, message=FALSE, warning=FALSE}
+library(INFUSE)
 source(here::here("code/data_prep_utils.R"))
 ```
 
@@ -32,57 +34,61 @@ source(here::here("code/data_prep_utils.R"))
 
 **Goal:** Standardize summary statistics from different ancestries (e.g., EUR and AFR) to a common reference panel (e.g. 1000 Genome).
 
-We recommend removing **strand-ambiguous SNPs**, **multi-allelic variants**, **variants within the MHC region**, and variants with **minor allele frequency (MAF) < 0.01** via `GWAS_QC`. Importantly, similar to the joint-modeling approach in MESuSiE, we **restrict to the intersection of SNPs between EUR and AFR**.
+Apply QC separately in each ancestry and retain variants available in either EUR or AFR. In this analysis, **common variants** are variants available in both ancestries, whereas **ancestry-unique variants** are available in only one ancestry. Unlike MESuSiE, INFUSE **does not** require restricting the analysis to common variants.
+
+We recommend removing **strand-ambiguous SNPs**, **multi-allelic variants**, **variants within the MHC region**, and variants with **minor allele frequency (MAF) < 0.01** via `GWAS_QC`. Match each ancestry against its own 1KG reference panel.
 
 ```{r step1, eval=FALSE}
 library(tidyverse)
-source("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/utility.R")
+library(data.table)
 
-ref   <- fread("/scratch/negishi/chen4422/UKBB_pheSVD-main/ukb_geno/in_sample_ld/1kg_build38/flipped_finemap_allbyall/1kg_afr_maf_unrelated_biallelic_nodup_extracted.bim")
-colnames(ref) <- c("CHR", "SNP", "CM", "POS", "ALT", "REF")
-ref   <- GWAS_QC(ref, 0.01)
+kg_base <- "/scratch/negishi/chen4422/UKBB_pheSVD-main/ukb_geno/in_sample_ld/1kg_build38/flipped_finemap_allbyall"
+ref_eur <- fread(file.path(kg_base, "1kg_eur_maf_unrelated_biallelic_nodup_extracted.bim"))
+ref_afr <- fread(file.path(kg_base, "1kg_afr_maf_unrelated_biallelic_nodup_extracted.bim"))
+colnames(ref_eur) <- colnames(ref_afr) <- c("CHR", "SNP", "CM", "POS", "ALT", "REF")
+ref_eur <- GWAS_QC(ref_eur, 0.01)
+ref_afr <- GWAS_QC(ref_afr, 0.01)
 annot <- fread("/scratch/negishi/chen4422/UKBB_pheSVD-main/ukb_geno/in_sample_ld/baselineLF_v2.2.UKB/annot_combine/first_three_columns.annot")
 
 afr_file <- "/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/DBP_v8_GWAS_afr_regenie_results_From5_20250417_combined_format_noMHC.csv.gz"
 eur_file <- "/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/DBP_v8_GWAS_eur_regenie_results_From5_20250417_combined_format_noMHC.csv.gz"
 
-# QC and filter each ancestry against the 1KG reference
-afrdata_qced <- read_sumstats(afr_file, ref)
-eurdata_qced <- read_sumstats(eur_file, ref)
+# QC each ancestry against its own reference, without cross-ancestry intersection.
+afrdata_qced <- read_sumstats(afr_file, ref_afr)
+eurdata_qced <- read_sumstats(eur_file, ref_eur)
 
-# Restrict to common SNPs, align alleles, and filter to annotation SNPs
-common_snp        <- find_common_snps(eurdata_qced, afrdata_qced)
-eurdata_tofinemap <- eurdata_qced %>% filter(CHR_POS %in% common_snp)
-eurdata_tofinemap$SNP <- ref$SNP[match(eurdata_tofinemap$CHR_POS, ref$CHR_POS)]
-afrdata_tofinemap <- allele_flip(eurdata_tofinemap,
-                                 afrdata_qced %>% filter(CHR_POS %in% common_snp))
-afrdata_tofinemap$SNP <- ref$SNP[match(afrdata_tofinemap$CHR_POS, ref$CHR_POS)]
-eurdata_tofinemap <- eurdata_tofinemap %>% filter(SNP %in% annot$SNP)
-afrdata_tofinemap <- afrdata_tofinemap %>% filter(SNP %in% annot$SNP)
+eurdata_tofinemap <- eurdata_qced %>% filter(SNP %in% annot$SNP)
+afrdata_tofinemap <- afrdata_qced %>% filter(SNP %in% annot$SNP)
 
-# Write outputs
-trait   <- "DBP"
-out_dir <- "/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/summstats_to_finemap/"
-fwrite(eurdata_tofinemap,paste0(out_dir, trait, "_EUR_GRCh38_combined_format_noMHC_to_finemap.csv"))
-fwrite(afrdata_tofinemap,paste0(out_dir, trait, "_AFR_GRCh38_combined_format_noMHC_to_finemap.csv"))
-fwrite(eurdata_tofinemap[, c(1, 6)], paste0(out_dir, trait, "_GRCh38_combined_format_noMHC_to_finemap_ref_flip"),  col.names = FALSE, sep = " ")
-fwrite(eurdata_tofinemap[, c(1)], paste0(out_dir, trait, "_GRCh38_combined_format_noMHC_to_finemap_snplist"),   col.names = FALSE)
+# Write separate ancestry-specific summary statistics and reference lists.
+trait <- "DBP"
+out_dir <- file.path("aou_union_example", "summary_statistics")
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+for (anc in c("EUR", "AFR")) {
+  ss <- as.data.frame(if (anc == "EUR") eurdata_tofinemap else afrdata_tofinemap)
+  prefix <- file.path(out_dir, paste0(trait, "_", anc, "_GRCh38_combined_format_noMHC_to_finemap"))
+  fwrite(ss, paste0(prefix, ".csv"))
+  fwrite(ss[, c("SNP", "REF")], paste0(prefix, "_ref_flip"), col.names = FALSE, sep = " ")
+  fwrite(ss[, "SNP", drop = FALSE], paste0(prefix, "_snplist"), col.names = FALSE)
+}
 ```
 
-Note that the **ALT and REF alleles need to be consistent across ancestry groups**. In the *All of Us* dataset this is pre-harmonized; for other sources see [this document](https://borangao.github.io/meSuSie_Analysis/GWAS_QC.html).
+ALT and REF alleles need to be consistent across ancestry groups. The All of Us summary statistics used here are already harmonized; for other sources see [this document](https://borangao.github.io/meSuSie_Analysis/GWAS_QC.html).
 
 ---
 
 ### 2. Align GWAS Summary Statistics with LD Reference Panel
 
-**Goal:** Construct ancestry-matched LD reference genotypes from 1KG that **exactly match** the GWAS variant list and use the same REF/ALT orientation, avoiding sign errors in Z-scores.
+**Goal:** Construct ancestry-matched LD reference genotypes from 1KG that **match each ancestry’s own** GWAS variant list and use the same REF/ALT orientation, avoiding sign errors in Z-scores.
 
 We use `plink2` to subset 1KG genotypes (`--extract`), enforce REF allele orientation (`--ref-allele`), and output a new `.bed/.bim/.fam` file (`--make-bed`).
 
 ```{r step2, eval=FALSE}
 trait <- "DBP"
-align_ld_ref("EUR", trait)
-align_ld_ref("AFR", trait)
+kg_dir <- file.path("aou_union_example", "ld_reference")
+dir.create(kg_dir, recursive = TRUE, showWarnings = FALSE)
+align_ld_ref("EUR", trait, kg_base = kg_base, ss_dir = out_dir, out_base = kg_dir)
+align_ld_ref("AFR", trait, kg_base = kg_base, ss_dir = out_dir, out_base = kg_dir)
 ```
 
 ---
@@ -93,19 +99,19 @@ Below, we use the region spanning **58,658,279–59,673,534 bp on chromosome 20*
 
 ```{r step3, eval=FALSE}
 trait   <- "DBP"
-kg_dir  <- paste0("/scratch/negishi/chen4422/UKBB_pheSVD-main/ukb_geno/in_sample_ld/1kg_build38/flipped_finemap_allbyall/lipids_v8/test_MF/")
-eur_ref <- fread(paste0(kg_dir, "1kg_eur_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped.bim"))
-afr_ref <- fread(paste0(kg_dir, "1kg_afr_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped.bim"))
+kg_dir <- file.path("aou_union_example", "ld_reference")
+eur_ref <- fread(file.path(kg_dir, paste0("1kg_eur_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped.bim")))
+afr_ref <- fread(file.path(kg_dir, paste0("1kg_afr_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped.bim")))
 
 start <- 58658279; end <- 59673534
 
 build_ld_matrix(eur_ref, chr_num = 20, start_pos = start, end_pos = end,
-                bfile   = paste0(kg_dir, "1kg_eur_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped"),
-                out_dir = paste0("risk_loci_ld_eur_", trait))
+                bfile   = file.path(kg_dir, paste0("1kg_eur_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped")),
+                out_dir = file.path("aou_union_example", paste0("risk_loci_ld_eur_", trait)))
 
 build_ld_matrix(afr_ref, chr_num = 20, start_pos = start, end_pos = end,
-                bfile   = paste0(kg_dir, "1kg_afr_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped"),
-                out_dir = paste0("risk_loci_ld_afr_", trait))
+                bfile   = file.path(kg_dir, paste0("1kg_afr_maf_unrelated_biallelic_nodup_extracted_", trait, "_flipped")),
+                out_dir = file.path("aou_union_example", paste0("risk_loci_ld_afr_", trait)))
 ```
 
 ---
@@ -114,28 +120,100 @@ build_ld_matrix(afr_ref, chr_num = 20, start_pos = start, end_pos = end,
 
 A common issue in fine-mapping is mismatch between summary statistics and the LD reference panel. We use `kriging_rss` from `susieR` to iteratively identify and remove SNPs whose Z-scores are inconsistent with the LD structure. `filter_ld_mismatch()` handles the full loop automatically.
 
-```{r step4, message=FALSE, warning=FALSE}
+```{r step4, eval=FALSE}
 trait <- "DBP"
 
-geno_dir_eur <- paste0("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/risk_loci_ld_eur_", trait, "/")
-geno_dir_afr <- paste0("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/risk_loci_ld_afr_", trait, "/")
+geno_dir_eur <- file.path("aou_union_example", paste0("risk_loci_ld_eur_", trait))
+geno_dir_afr <- file.path("aou_union_example", paste0("risk_loci_ld_afr_", trait))
 
-afr_sumstats <- fread(paste0("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/summstats_to_finemap/", trait, "_AFR_GRCh38_combined_format_noMHC_to_finemap.csv"))
-eur_sumstats <- fread(paste0("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/summstats_to_finemap/", trait, "_EUR_GRCh38_combined_format_noMHC_to_finemap.csv"))
+afr_sumstats <- fread(file.path(out_dir, paste0(trait, "_AFR_GRCh38_combined_format_noMHC_to_finemap.csv")))
+eur_sumstats <- fread(file.path(out_dir, paste0(trait, "_EUR_GRCh38_combined_format_noMHC_to_finemap.csv")))
 
 afr_res <- filter_ld_mismatch(geno_dir_afr, "loci_example", afr_sumstats)
-```
-
-The **Kriging RSS diagnostic** plot color-codes SNPs by their likelihood of being an LD outlier. In the example above, an initial outlier was identified and removed in the following iteration.
-
-We apply the same procedure to the European American group, then save the cleaned outputs:
-
-```{r step4-eur, eval=FALSE}
 eur_res <- filter_ld_mismatch(geno_dir_eur, "loci_example", eur_sumstats)
 
-data_dir <- paste0("/scratch/negishi/chen4422/hapnest/multi-ans-sum-stats/Lipids_all_of_us_v8/formatted/format_summary_stats/results_", trait, "/summary_data/")
-fwrite(afr_res$sumstats, paste0(data_dir, "afr_loci_example_summ"))
-fwrite(eur_res$sumstats, paste0(data_dir, "eur_loci_example_summ"))
-fwrite(afr_res$cov,      paste0(data_dir, "afr_loci_example.ld"), sep = " ")
-fwrite(eur_res$cov,      paste0(data_dir, "eur_loci_example.ld"), sep = " ")
+data_dir <- file.path("aou_union_example", paste0("results_", trait), "summary_data")
+dir.create(data_dir, recursive = TRUE, showWarnings = FALSE)
+fwrite(afr_res$sumstats, file.path(data_dir, "afr_loci_example_summ"))
+fwrite(eur_res$sumstats, file.path(data_dir, "eur_loci_example_summ"))
+fwrite(afr_res$cov,      file.path(data_dir, "afr_loci_example.ld"), sep = " ")
+fwrite(eur_res$cov,      file.path(data_dir, "eur_loci_example.ld"), sep = " ")
 ```
+
+
+---
+
+### 5. Variant Harmonization
+
+Combine the post-QC summary statistics and LD from the preceding steps, retaining both common and ancestry-unique variants.
+
+Match functional annotations to variants by rsID and allele pair, excluding missing or ambiguous matches. `DBP_chr20_annotations.rds` below is the resulting numeric annotation matrix, with SNP IDs as row names.
+
+```{r save-observed-inputs, eval=FALSE}
+to_infuse_summary <- function(ss) {
+  ss <- as.data.frame(ss)
+  rename <- c(BETA = "Beta", SE = "Se", ALT = "A1", REF = "A2")
+  for (old in names(rename)) {
+    if (old %in% names(ss)) names(ss)[names(ss) == old] <- rename[[old]]
+  }
+  if (!"Z" %in% names(ss)) ss$Z <- ss$Beta / ss$Se
+  ss
+}
+summary_stat_list <- list(
+  EUR = to_infuse_summary(eur_res$sumstats),
+  AFR = to_infuse_summary(afr_res$sumstats)
+)
+R_mat_list <- list(EUR = eur_res$cov, AFR = afr_res$cov)
+annot <- readRDS("data/DBP_chr20_annotations.rds")
+stopifnot(!is.null(rownames(annot)))
+
+ref <- do.call(rbind, summary_stat_list)
+ref <- ref[!duplicated(ref$SNP), ]
+ref <- ref[order(ref$CHR, ref$POS, ref$SNP), ]
+union_ids <- ref$SNP[ref$SNP %in% rownames(annot)]
+allele_ref <- ref[match(union_ids, ref$SNP), c("SNP", "A1", "A2")]
+for (anc in names(summary_stat_list)) {
+  ss <- summary_stat_list[[anc]]
+  ss <- ss[ss$SNP %in% union_ids, ]
+  summary_stat_list[[anc]] <- ss
+  R_mat_list[[anc]] <- R_mat_list[[anc]][ss$SNP, ss$SNP, drop = FALSE]
+}
+observed <- list(
+  summary_stat_list = summary_stat_list,
+  R_mat_list = R_mat_list,
+  annot = annot[union_ids, , drop = FALSE],
+  union_ids = union_ids,
+  allele_ref = allele_ref
+)
+dir.create("data", showWarnings = FALSE)
+saveRDS(observed, "data/DBP_chr20_observed.rds")
+```
+
+```{r prepared-example-inputs, include=FALSE}
+# Load the saved example when rendering this page independently.
+observed <- readRDS(Sys.getenv(
+  "INFUSE_AOU_EXAMPLE_INPUT", "data/DBP_chr20_observed.rds"
+))
+```
+
+```{r prepare-union, message=FALSE, warning=FALSE}
+prep <- prepare_infuse_union(
+  summary_stat_list = observed$summary_stat_list,
+  R_mat_list = observed$R_mat_list,
+  annot = observed$annot,
+  annot_ids = rownames(observed$annot),
+  union_ids = observed$union_ids,
+  allele_ref = observed$allele_ref,
+  ld_allele_coding = "ancestry_effect",
+  require_complete_ld_dimnames = TRUE
+)
+
+colSums(prep$variant_available)
+table(prep$variant_map$availability_pattern)
+```
+
+After annotation matching, the example contains **2,890 variants**: 1,867 common variants and 1,023 ancestry-unique variants (241 EUR-only and 782 AFR-only). EUR and AFR contribute 2,108 and 2,649 variants, respectively.
+
+The function `prepare_infuse_union()` aligns SNPs and harmonizes alleles across the ancestry-specific inputs, retaining both common and ancestry-unique variants. Set `ld_allele_coding = "ancestry_effect"` when LD follows each ancestry’s effect-allele coding, as in this example, or `"reference"` when LD already follows `allele_ref`. The returned `prep$variant_available` records the availability of common and ancestry-unique variants in each ancestry.
+
+Continue to [Run INFUSE](Run_INFUSE.html) to fine-map this locus.

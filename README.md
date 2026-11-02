@@ -10,11 +10,12 @@ A [workflowr][] project.
 
 ## Overview
 
-INFUSE is an R package that performs multi-ancestry genetic fine-mapping by incorporating functional genomic annotations into a Sum of Single Effects (SuSiE) framework. It accepts GWAS summary statistics and ancestry-specific LD matrices from multiple populations, and optionally integrates SNP-level functional annotations (e.g., open chromatin, transcription factor binding, conservation scores) to improve causal variant prioritization.
+INFUSE is an R package that performs multi-ancestry genetic fine-mapping by incorporating functional genomic annotations into a Sum of Single Effects (SuSiE) framework. It accepts GWAS summary statistics and ancestry-specific LD matrices on the union of variants available across populations, and optionally integrates SNP-level functional annotations (e.g., open chromatin, transcription factor binding, conservation scores) to improve causal variant prioritization.
 
 The core function `infuse_core()` jointly models shared and ancestry-specific causal signals across diverse populations, providing:
 
-- **Posterior Inclusion Probabilities (PIPs)** per SNP per ancestry
+- **Posterior Inclusion Probabilities (PIPs)** for either-ancestry and configuration-specific causal signals
+- **Ancestry-specific variant modeling** to retain variants observed in only a subset of ancestries
 - **95% Credible Sets** for causal variant discovery
 - **Annotation-informed priors** via sparse PCA (`mlk`) or GLM-based methods
 
@@ -34,22 +35,33 @@ library(INFUSE)
 
 ## Quick Start
 
+Use the post-QC observed inputs from the original AoU DBP example locus on chromosome 20, prepared as described in [Data Preparation](docs/Data_prepare.html). The controlled-access GWAS and LD data are not distributed with the website.
+
 ```r
 library(INFUSE)
+observed <- readRDS("data/DBP_chr20_observed.rds")
 
-# Provide per-ancestry LD matrices and summary statistics
-result <- infuse_core(
-  R_mat_list        = list(EUR = eur_ld, AFR = afr_ld),
-  summary_stat_list = list(EUR = eur_gwas, AFR = afr_gwas),
-  L                 = 10,
-  annot             = snp_annot_matrix,
-  annot_method      = "mlk"
+prep <- prepare_infuse_union(
+  summary_stat_list = observed$summary_stat_list,
+  R_mat_list = observed$R_mat_list,
+  annot = observed$annot,
+  annot_ids = rownames(observed$annot),
+  union_ids = observed$union_ids,
+  allele_ref = observed$allele_ref,
+  ld_allele_coding = "ancestry_effect",
+  require_complete_ld_dimnames = TRUE
 )
 
-# Inspect credible sets
-result$cs
+result <- infuse_core(
+  R_mat_list = prep$R_mat_list,
+  summary_stat_list = prep$summary_stat_list,
+  L = 10,
+  annot = prep$annot,
+  annot_method = "mlk",
+  variant_available = prep$variant_available
+)
 
-# Inspect PIPs
+result$cs
 head(result$pip)
 ```
 
