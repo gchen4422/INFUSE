@@ -128,6 +128,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test_run_loglik_cpp_avail
+double test_run_loglik_cpp_avail(arma::vec V, const arma::mat& betahat, const arma::mat& shat2, const arma::mat& prior_weight, const int nancestry, arma::uvec diag_index, Rcpp::List config_list, Rcpp::List config_snp_index);
+RcppExport SEXP _INFUSE_test_run_loglik_cpp_avail(SEXP VSEXP, SEXP betahatSEXP, SEXP shat2SEXP, SEXP prior_weightSEXP, SEXP nancestrySEXP, SEXP diag_indexSEXP, SEXP config_listSEXP, SEXP config_snp_indexSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type V(VSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type betahat(betahatSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type shat2(shat2SEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type prior_weight(prior_weightSEXP);
+    Rcpp::traits::input_parameter< const int >::type nancestry(nancestrySEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type diag_index(diag_indexSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type config_list(config_listSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type config_snp_index(config_snp_indexSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_run_loglik_cpp_avail(V, betahat, shat2, prior_weight, nancestry, diag_index, config_list, config_snp_index));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_INFUSE_loglik_cpp_R6", (DL_FUNC) &_INFUSE_loglik_cpp_R6, 6},
@@ -138,6 +156,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_INFUSE_estimate_prior_annot", (DL_FUNC) &_INFUSE_estimate_prior_annot, 2},
     {"_INFUSE_llk_prior_causal_cpp", (DL_FUNC) &_INFUSE_llk_prior_causal_cpp, 3},
     {"_INFUSE_optimize_llk", (DL_FUNC) &_INFUSE_optimize_llk, 3},
+    {"_INFUSE_test_run_loglik_cpp_avail", (DL_FUNC) &_INFUSE_test_run_loglik_cpp_avail, 8},
     {NULL, NULL, 0}
 };
 

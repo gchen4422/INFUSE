@@ -33,3 +33,7 @@ optimize_llk <- function(annotation, alpha, initial_w) {
     .Call(`_INFUSE_optimize_llk`, annotation, alpha, initial_w)
 }
 
+test_run_loglik_cpp_avail <- function(V, betahat, shat2, prior_weight, nancestry, diag_index, config_list, config_snp_index) {
+    .Call(`_INFUSE_test_run_loglik_cpp_avail`, V, betahat, shat2, prior_weight, nancestry, diag_index, config_list, config_snp_index)
+}
+

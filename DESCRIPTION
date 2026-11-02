@@ -1,17 +1,18 @@
 Package: INFUSE
 Type: Package
 Title: Integrating Functional Annotations into Multi-Ancestry Fine-Mapping
-Version: 0.0.1.9000
-Authors@R: 
-    person(
-      given = "Guangxin",
-      family = "Chen",
-      role = c("aut", "cre"),
-      email = "chen4422@purdue.edu"
-    )
+Version: 0.0.2.9000
+Authors@R: c(
+    person("Guangxin", "Chen", role = c("aut", "cre"),
+           email = "chen4422@purdue.edu",
+           comment = c(affiliation = "Purdue University")),
+    person("Boran", "Gao", role = "aut",
+           comment = c(affiliation = "Purdue University")))
 Description: Provides tools for multi-ancestry fine-mapping using a sum of
     single effects framework, with optional integration of functional
     annotations to improve prior specification and variant prioritization.
+    Supports ancestry-specific variant availability through conditional ancestry
+    configurations and includes joint linkage-disequilibrium discrepancy diagnostics.
 License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -26,11 +27,25 @@ Imports:
     Matrix,
     ggplot2,
     mixsqp,
+    cowplot,
+    dplyr,
+    utils,
     stats
 LinkingTo:
     Rcpp,
     RcppArmadillo
+Suggests:
+    data.table
 NeedsCompilation: yes
 Depends: 
     R (>= 3.5)
+Collate:
+    'RcppExports.R'
+    'infuse_utility.R'
+    'availability.R'
+    'infuse_core.R'
+    'utility.R'
+    'modified_kriging_rss.R'
+    'data.R'
 LazyData: true
+LazyDataCompression: xz

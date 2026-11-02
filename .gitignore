@@ -1,0 +1,15 @@
+.*
+!.gitignore
+!.Rbuildignore
+!.github/
+.lib/
+*.o
+*.so
+*.dll
+*.tar.gz
+*.Rcheck/
+.Rhistory
+.RData
+Rplots.pdf
+**/.ipynb_checkpoints/
+/tests/

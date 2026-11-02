@@ -53,7 +53,7 @@ flips (logLR > 2 and |z_std_diff| > 4) are highlighted in red.}
 }
 \description{
 A novel multi-ancestry extension of the \code{kriging_rss} diagnostic
-(Zhu & Stephens, 2018) that jointly tests for LD mismatches and allele
+(Zou et al., 2022) that jointly tests for LD mismatches and allele
 flips across two ancestries simultaneously. For each variant, the
 conditional distribution of its z-score given all others is computed under
 the stacked model \eqn{(z_1, z_2) \sim N(0,\, (1-s)R + sI)}, where
@@ -67,7 +67,8 @@ evidence across both ancestries, increasing sensitivity over single-ancestry
 diagnostics.
 }
 \references{
-Zhu, X. & Stephens, M. (2018). Large-scale genome-wide enrichment analyses
-identify new trait-associated genes and pathways. \emph{Nature Communications},
-9, 4361. \doi{10.1038/s41467-018-06805-x}
+Zou, Y., Carbonetto, P., Wang, G. & Stephens, M. (2022).
+Fine-mapping from summary data with the "Sum of Single Effects" model.
+\emph{PLOS Genetics}, 18(7), e1010299.
+\doi{10.1371/journal.pgen.1010299}
 }

@@ -2,11 +2,13 @@
 
 **INFUSE**: **IN**tegrating **F**unctional annotations into m**U**lti-ancestry fine-mapping via **S**um of single **E**ffect model.
 
-![INFUSE logo](INFUSE.png)
+![INFUSE overview](Figure_1_variant_availability.png)
 
 ## Overview
 
-INFUSE is an R package for multi-ancestry GWAS fine-mapping using summary statistics. Two key features distinguish it from existing methods:
+INFUSE is an R package for multi-ancestry GWAS fine-mapping using summary statistics. Three key features distinguish it from existing methods:
+
+**Ancestry-specific variant modeling.** INFUSE accommodates variants available in at least one ancestry, including variants polymorphic in only certain populations, enabling broader discovery of shared and ancestry-specific causal signals.
 
 **Functional annotation integration.** INFUSE learns SNP-level causal priors from sparse principal components of high-dimensional functional annotation matrices, such as BaselineLF v2.2. This enables signal-specific prior modeling across hundreds of correlated genomic features while reducing overfitting and improving interpretability.
 
@@ -29,15 +31,33 @@ library(INFUSE)
 
 ## Example data
 
-A ready-to-use example dataset is bundled with the package:
+The bundled `infuse_availability_example` contains 2,857 variants observed in at least one ancestry
+(1,432 available in both ancestries, 124 EUR-only, and 1,301 AFR-only) and 186 annotations.
+For unequal variant sets, use `prepare_infuse_union()` to harmonize and align the inputs:
 
 ```r
-data(infuse_example)
+data(infuse_availability_example)
+x <- infuse_availability_example
 
-R_mat_list           <- infuse_example$R_mat_list           # LD matrices (EUR, AFR)
-summary_stat_sd_list <- infuse_example$summary_stat_sd_list # GWAS summary stats
-annot_file_all       <- infuse_example$annot_file_all       # 1432 x 186 annotation matrix
-ancestry_weight      <- infuse_example$ancestry_weight      # prior weights c(3,3,1)/7
+prep <- prepare_infuse_union(
+  summary_stat_list = x$summary_stat_list,
+  R_mat_list = x$R_mat_list,
+  annot = x$annot,
+  annot_ids = x$annot_ids,
+  union_ids = x$union_ids,
+  allele_ref = x$allele_ref,
+  ld_allele_coding = "ancestry_effect",
+  require_complete_ld_dimnames = TRUE
+)
+
+fit <- infuse_core(
+  R_mat_list = prep$R_mat_list,
+  summary_stat_list = prep$summary_stat_list,
+  L = 10,
+  annot = prep$annot,
+  annot_method = "mlk",
+  variant_available = prep$variant_available
+)
 ```
 
 ## Core functions
@@ -45,31 +65,33 @@ ancestry_weight      <- infuse_example$ancestry_weight      # prior weights c(3,
 ### `infuse_core()`
 
 ```r
-infuse_core <- function(
+infuse_core(
   R_mat_list,              # named list of LD correlation matrices by ancestry (SNP x SNP)
-  summary_stat_list,       # named list of data.frames with SNP, A1, A2, BETA, SE (harmonized, same SNP order)
+  summary_stat_list,       # named list of data.frames with SNP, Beta, Se, Z, N (same SNP order)
   L,                       # integer: max number of causal signals
   residual_variance = NULL,
   prior_weights = NULL,    # optional numeric vector length m (per-SNP prior multipliers)
-  ancestry_weight = NULL,  # optional named numeric vector (e.g., c(EUR = 0.6, AFR = 0.4))
+  ancestry_weight = NULL,  # optional prior weights over ancestry configurations
   optim_method = "optim",
   estimate_residual_variance = FALSE,
   max_iter = 100,
   cor_method = "min.abs.corr",
   cor_threshold = 0.5,
   annot = NULL,            # SNP x feature matrix/data.frame aligned to SNP order
-  annot_method = NULL,     # e.g., "mlk" for sparsePCA, "glm", or NULL
-  est_annot_prior = "fixed"
+  annot_method = NULL,     # e.g., "mlk" for sparse PCA, "glmnet", or NULL
+  est_annot_prior = "fixed",
+  variant_available = NULL, # SNP x ancestry indicator of variant availability
+  verbose = TRUE
 )
 ```
 
 #### Arguments
 
 - **`R_mat_list`**  
-  Named list of ancestry-specific **LD correlation matrices** (symmetric; identical SNP IDs and identical SNP order across ancestries).
+  Named list of ancestry-specific **LD correlation matrices** (symmetric; identical SNP IDs and identical SNP order across ancestries after union preparation). Use `prepare_infuse_union()` for unequal observed variant sets.
 
 - **`summary_stat_list`**  
-  Named list of GWAS summary-stat data.frames aligned to LD. Required columns: `SNP`, `A1`, `A2`, `BETA`, `SE` (optionally `CHR`, `BP`). Alleles should be uppercase and harmonized across ancestries.
+  Named list of GWAS summary-stat data.frames aligned to LD. Required columns: `SNP`, `Beta`, `Se`, `Z`, `N`. Effect alleles must be harmonized across ancestries. List names must match those of `R_mat_list`.
 
 - **`L`**  
   Integer: maximum number of causal signals to model for the region.
@@ -81,7 +103,7 @@ infuse_core <- function(
   Optional numeric vector of length *m* (per-SNP prior multipliers), aligned to SNP order.
 
 - **`ancestry_weight`**  
-  Optional **named** numeric vector weighting ancestries in the joint objective (e.g., `c(EUR = 0.6, AFR = 0.4)`).
+  Optional numeric vector of prior weights over the `2^K - 1` nonempty ancestry configurations, where `K` is the number of ancestries. For two ancestries, the default weights are `c(3, 3, 1)/7` for the two ancestry-specific configurations followed by the shared configuration. With unequal variant availability, these weights are renormalized over the permitted configurations for each SNP.
 
 - **`optim_method`**  
   Optimizer choice (default `"optim"`).
@@ -93,16 +115,22 @@ infuse_core <- function(
   Integer: maximum optimization iterations.
 
 - **`cor_method`, `cor_threshold`**  
-  Internal correlation/LD-consistency handling (defaults `"min.abs.corr"` and `0.5`).
+  Credible-set purity criterion and threshold (defaults `"min.abs.corr"` and `0.5`).
 
 - **`annot`**  
   Annotation matrix/data.frame (SNP × features), rows aligned to SNP order.
 
 - **`annot_method`**  
-  How to use annotations (e.g., `"mlk"` for sparse PCA, `"glm"`, or `NULL`).
+  How to use annotations (e.g., `"mlk"` for sparse PCA, `"glmnet"`, or `NULL`).
 
 - **`est_annot_prior`**  
-  Annotation-prior mode (e.g., `"fixed"`).
+  Annotation-prior mode (`"fixed"` or `"optim"`).
+
+- **`variant_available`**
+  Optional logical SNP-by-ancestry matrix specifying where each variant is available for fine-mapping (`TRUE` = available). This allows variants available in only a subset of ancestries to contribute to causal discovery. Rows follow SNP order, and column names match the ancestry list names. `NULL` assumes all variants are available in all ancestries.
+
+- **`verbose`**
+  Logical. Whether to print progress (default `TRUE`).
 
 ---
 

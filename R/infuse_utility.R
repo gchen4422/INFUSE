@@ -2,7 +2,7 @@
 # #####################################
 #
 #
-#       meSuSie utility functions
+#       INFUSE utility functions
 #
 #
 # ####################################
@@ -20,7 +20,7 @@
 # pre_optim is a function to prepare the input for parameter space of the prior covariance matrix
 #
 # Function takes input of number of ancestry, lower and upper bound of the prior variance
-# 
+#
 #####################################################################################################
 pre_optim<-function(nancestry,min_var,max_var){
   total_ele_num<-(nancestry+1)*nancestry/2
@@ -36,7 +36,7 @@ pre_optim<-function(nancestry,min_var,max_var){
 # vec_to_cov is a function to transform the estimated paramter to covariance matrix
 #
 # Function takes input of estimated parameter vector, the index of variance and number of ancestry
-# 
+#
 #####################################################################################################
 vec_to_cov<-function(v_vec,diag_index,nancestry){
   cor_mat = matrix(NA,ncol=nancestry,nrow = nancestry)
@@ -54,7 +54,7 @@ vec_to_cov<-function(v_vec,diag_index,nancestry){
 # multivariate_regression is a function to compute the lbf, posterior mean and posterior second moment
 #
 # Function takes input of Xty, shat and estimated covariance matrix
-# 
+#
 #####################################################################################################
 uni_reg<-function(betahat,shat2,sigma2){
 		lbf = dnorm(betahat,0,sqrt(sigma2 + shat2),log = TRUE) - dnorm(betahat,0,sqrt(shat2),log = TRUE)
@@ -65,10 +65,10 @@ uni_reg<-function(betahat,shat2,sigma2){
 }
 
 compute_b1b2<-function(alpha,mu1,mu2,column_config,nancestry,nsnp){
-	
+
 		EB1 = matrix(0,ncol=nancestry,nrow=nsnp)
 		EB2 = matrix(0,ncol=nancestry,nrow=nsnp)
-		
+
 		for(x in 1:length(column_config)){
 		cor_cols = column_config[[x]]
 		EB1[,cor_cols]	= EB1[,cor_cols]+alpha[,x]*mu1[[x]]
@@ -80,15 +80,15 @@ compute_b1b2<-function(alpha,mu1,mu2,column_config,nancestry,nsnp){
 
 }
 multivariate_regression<-function(Xty,shat2,V_mat){
-  
+
   out<-lapply(seq(1,nrow(shat2)),function(x){
     SIGMA<-diag(1/shat2[x,])
     V_mat_SIGMA<-V_mat%*%SIGMA
     post_var<-diag(shat2[x,])-solve(SIGMA+SIGMA%*%V_mat_SIGMA)
-    Xty_var <- Xty[x,]%*%post_var	
+    Xty_var <- Xty[x,]%*%post_var
     post_mean_wmulti<-Xty_var ###Connection of two distribution
     post_mean2_wmulti<-(Xty_var)^2+ diag(post_var)
-    
+
     lbf_part_1<-0.5*sum(Xty_var*Xty[x,])
     lbf_part_2<-0.5*log(det(V_mat_SIGMA+diag(rep(1,ncol(shat2)))))
     return(list(lbf = lbf_part_1 - lbf_part_2,post_mean_wmulti=post_mean_wmulti,post_mean2_wmulti=post_mean2_wmulti))
@@ -117,6 +117,99 @@ compute_softmax<-function(lbf,prior_weights){
   alpha_wmulti = w_weighted_multi / weighted_sum_w
   #print(weighted_sum_w)
   return(list(alpha_wmulti = alpha_wmulti, loglik = maxlbf+log(weighted_sum_w)))
+}
+
+
+# Restricted likelihood and posterior normalization.
+
+compute_softmax_avail<-function(lbf,prior_weights,feasible = NULL){
+  if(is.null(feasible)) feasible = prior_weights > 0
+  # A cell with M_{js}=1 but ZERO joint prior pi_{lj} phi^H_{s,j} (e.g. a variant
+  # excluded via prior_weights[j] == 0) must not be allowed to set
+  # the log-sum-exp scale: a large log-BF there would drive every weighted term to
+  # underflow. Active softmax support is therefore M_{js}=1 AND positive joint prior.
+  feasible = feasible & (prior_weights > 0)
+  if(!any(feasible)){
+    stop("compute_softmax_avail(): no feasible variant/configuration cell has positive prior weight.",call. = FALSE)
+  }
+
+  lbf_f = lbf
+  lbf_f[!feasible] = -Inf
+
+  maxlbf = max(lbf_f[feasible])
+  if(!is.finite(maxlbf)){
+    stop("compute_softmax_avail(): all feasible log Bayes factors are non-finite.",call. = FALSE)
+  }
+
+  w_multi = exp(lbf_f - maxlbf)                 # exp(-Inf) == 0
+  w_weighted_multi = w_multi * prior_weights
+  w_weighted_multi[!feasible] = 0               # exact zero support
+  w_weighted_multi[!is.finite(w_weighted_multi)] = 0
+
+  weighted_sum_w = sum(w_weighted_multi)
+  if(!is.finite(weighted_sum_w)|weighted_sum_w<=0){
+    stop("compute_softmax_avail(): total posterior weight is not positive and finite.",call. = FALSE)
+  }
+
+  alpha_wmulti = w_weighted_multi / weighted_sum_w
+  dimnames(alpha_wmulti) = dimnames(prior_weights)
+  return(list(alpha_wmulti = alpha_wmulti, loglik = maxlbf+log(weighted_sum_w)))
+}
+
+
+#' One ancestry configuration s, evaluated on J_s only
+#'
+#' Let `J_s={j:M_{js}=1}`. This function calls the unmodified [uni_reg()] /
+#' `mvlmm_reg()` on those rows, then pads back to full `m x |s|` dimensions with
+#' `log BF^H_{s,j}=-Inf` and exactly-zero posterior moments. Unavailable
+#' variant/ancestry entries are never
+#' passed into the regressions, so padded summary statistics cannot be mistaken
+#' for observations and no division by a padded standard error can occur.
+#'
+#' @param betahat,shat2 Full `m x K` matrices.
+#' @param V_mat `K x K` effect-size covariance matrix.
+#' @param cols Integer ancestry indices selected by configuration `s`.
+#' @param idx Integer indices in `J_s`.
+#' @param p Number of union variants, `m` (`p` is the software argument name).
+#' @return List with `lbf` (length `m`), `post_mean`, and `post_mean2`
+#'   (`m x |s|`).
+#' @note The local software variable `m` inside this function equals `|s|`; it is
+#'   unrelated to the supplementary-note symbol `m` for the union size.
+#' @export
+reg_one_config_avail<-function(betahat,shat2,V_mat,cols,idx,p){
+  m = length(cols)
+  lbf = rep(-Inf,p)
+  post_mean  = matrix(0,nrow = p,ncol = m)
+  post_mean2 = matrix(0,nrow = p,ncol = m)
+
+  if(length(idx)>0){
+    if(m==1){
+      out = uni_reg(betahat[idx,cols],shat2[idx,cols],V_mat[cols,cols])
+      lb = as.numeric(out$lbf)
+      lb[is.na(lb)] = 0                         # upstream maps NA lbf to 0; keep that,
+      lbf[idx] = lb                             # but only for FEASIBLE cells
+      post_mean[idx,1]  = as.numeric(out$post_mean)
+      post_mean2[idx,1] = as.numeric(out$post_mean2)
+    }else{
+      out = mvlmm_reg(betahat[idx,cols,drop=FALSE],shat2[idx,cols,drop=FALSE],V_mat[cols,cols,drop=FALSE])
+      lb = as.numeric(out$lbf)
+      lb[is.na(lb)] = 0
+      lbf[idx] = lb
+      post_mean[idx,]  = out$post_mean
+      post_mean2[idx,] = out$post_mean2
+    }
+  }
+
+  # Posterior moments must be exactly zero outside J_s. Use a logical
+  # mask, not negative indexing: `-integer(0)` would select NO rows.
+  infeasible = rep(TRUE,p)
+  infeasible[idx] = FALSE
+  post_mean[infeasible,]  = 0
+  post_mean2[infeasible,] = 0
+  post_mean[!is.finite(post_mean)]   = 0
+  post_mean2[!is.finite(post_mean2)] = 0
+
+  return(list(lbf = lbf,post_mean = post_mean,post_mean2 = post_mean2))
 }
 
 
@@ -154,7 +247,7 @@ get_purity = function(pos, Xcorr) {
   }
 }
 meSuSie_get_cs<-function(res,Xcorr,coverage = 0.95,prior_tol = 1e-9,cor_method =cor_method,cor_threshold=cor_threshold){
-  
+
   include_idx = unlist(lapply(res$V,function(x)max(diag(x))>prior_tol))
   alpha_either = t(Reduce(cbind,lapply(res$alpha,function(x)apply(x,1,sum))))
   status = in_CS(alpha_either,coverage = 0.95)
@@ -162,31 +255,31 @@ meSuSie_get_cs<-function(res,Xcorr,coverage = 0.95,prior_tol = 1e-9,cor_method =
   claimed_coverage = sapply(1:length(cs),function (i) sum(alpha_either[i,][cs[[i]]]))
   include_idx = include_idx * (lapply(cs,length) > 0)
   include_idx = include_idx * (!(duplicated(cs)))
-  
+
   include_idx = as.logical(include_idx)
   if (sum(include_idx) == 0)
     return(list(cs = NULL,coverage = NULL,requested_coverage = coverage))
-  
+
   cs = cs[include_idx]
   claimed_coverage = claimed_coverage[include_idx]
-  
+
   purity = data.frame(do.call(rbind,lapply(1:length(cs),function (i){
     get_purity(cs[[i]],Xcorr)
   })))
-  
+
   colnames(purity) = c("min.abs.corr","mean.abs.corr","median.abs.corr")
   threshold = cor_threshold
   is_pure = which(purity[,colnames(purity)%in%cor_method] >= threshold)
-  
+
  # is_pure = which(purity[,1] >= threshold)
-  
+
   if (length(is_pure) > 0) {
     cs = cs[is_pure]
     purity = purity[is_pure,]
     row_names = paste0("L",which(include_idx)[is_pure])
     names(cs) = row_names
     rownames(purity) = row_names
-    
+
     # Re-order CS list and purity rows based on purity.
     ordering = order(purity[,1],decreasing = TRUE)
     return(list(cs       = cs[ordering],
@@ -208,10 +301,10 @@ meSusie_get_pip_config = function (res) {
 }
 meSusie_get_pip = function (res, prior_tol = 1e-9) {
   include_idx = unlist(lapply(res$V,function(x)max(diag(x))>prior_tol))
-  
+
   alpha_either = t(Reduce(cbind,lapply(res$alpha,function(x)apply(x,1,sum))))
-  
-  
+
+
   if (length(include_idx) > 0)
     alpha_include = alpha_either[include_idx,,drop = FALSE]
   else
@@ -221,23 +314,23 @@ meSusie_get_pip = function (res, prior_tol = 1e-9) {
 ######################################
 #
 #
-#       meSuSie Plot Part
+#       INFUSE Plot Part
 #
 #
 #####################################
 require(ggplot2)
 require(cowplot)
 meSusie_plot_pip<-function(res,R_mat,summary_data,annotation_data=NULL){
-  
-  
-  
+
+
+
   names(summary_data)
 #  summary_data<-summary_stat_list
  # summary_data<-lapply(summary_data,function(x){
  #   x$POS=seq(1,500,1)
  #   return(x)})
   ##Create Mahattan Plot for GWAS Data
-  
+
   for(x in 1:res$nancestry){
     data_plot = summary_data[[x]]
     data_plot$Pvalue = 2*pnorm(-abs(data_plot$Z))
@@ -253,34 +346,34 @@ meSusie_plot_pip<-function(res,R_mat,summary_data,annotation_data=NULL){
       theme_bw()+ theme(legend.position="none") #guides(fill=guide_legend(title="r2"))+labs(colour= "r2")
     assign(paste0("GWAS_ancestry_",x),p_manhattan)
   }
-  
+
   SNP_pip_05 = which(res$pip>0.5)
   all_SNP_cs = unlist(res$cs$cs)
   following_snp = setdiff(all_SNP_cs,SNP_pip_05)
-  
+
   SNP_pip_05_label = rep(0,length(res$pip))
   SNP_pip_05_label[SNP_pip_05]=1
   SNP_following_snp_label = rep(0,length(res$pip))
   SNP_following_snp_label[following_snp]=1
-  
+
   data_plot = summary_data[[1]]
   data_plot$Pvalue = res$pip
   data_plot$LEAD_SNP_LABEL = SNP_pip_05_label
   data_plot$following_snp_label =  SNP_following_snp_label
-  
+
   p_pip = ggplot() + geom_point(data =data_plot[(data_plot$LEAD_SNP_LABEL!=1)&(data_plot$following_snp_label!=1),], aes(x = POS, y = Pvalue),size = 1.5,color="gray")+
     geom_point(data =data_plot[data_plot$LEAD_SNP_LABEL==1,], aes(x = POS, y = Pvalue),shape =3,size = 3,color="red")+
     geom_text(data =data_plot[data_plot$LEAD_SNP_LABEL==1,], mapping=aes(x=POS, y=Pvalue, label=SNP),vjust=1.2, size=4,show.legend = FALSE)+
     geom_point(data =data_plot[data_plot$following_snp_label==1,], aes(x = POS, y = Pvalue),size = 1,color="purple")+
     geom_hline(yintercept = 0.5,linetype = "dashed",color = "grey50",size = 0.5)+
-    xlab(paste0("meSuSie Result"))+ylab("PIP")+
+    xlab(paste0("INFUSE Result"))+ylab("PIP")+
     theme_bw()
-  
+
   plotlist<-list()
   for(i in 1:res$nancestry){
-    
+
     plotlist[[i]]=get(paste0("GWAS_ancestry_",i))
-    
+
   }
   plotlist[[res$nancestry+1]]<-p_pip
   cowplot::plot_grid(plotlist=plotlist)

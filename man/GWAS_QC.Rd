@@ -20,6 +20,16 @@ GWAS_QC(
 
 \item{MAF_threshold}{The threshold for Minor Allele Frequency filtering. SNPs
 with MAF below this threshold or above (1 - threshold) will be removed.}
+\item{rm_strand}{Remove strand-ambiguous variants.}
+
+\item{rm_multi}{Remove duplicated variant positions.}
+
+\item{rm_indel}{Remove insertion and deletion alleles.}
+
+\item{rm_mhc}{Remove the MHC region.}
+
+\item{rm_maf}{Apply the minor-allele-frequency threshold.}
+
 }
 \value{
 A filtered data frame after performing the quality control steps.

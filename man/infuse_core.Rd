@@ -2,7 +2,7 @@
 % Please edit documentation in R/infuse_core.R
 \name{infuse_core}
 \alias{infuse_core}
-\title{infuse core function}
+\title{Multi-ancestry fine-mapping with functional annotations}
 \usage{
 infuse_core(
   R_mat_list,
@@ -12,25 +12,65 @@ infuse_core(
   prior_weights = NULL,
   ancestry_weight = NULL,
   optim_method = "optim",
-  estimate_residual_variance = F,
+  estimate_residual_variance = FALSE,
   max_iter = 100,
   cor_method = "min.abs.corr",
   cor_threshold = 0.5,
   annot = NULL,
   annot_method = NULL,
-  est_annot_prior = "fixed"
+  est_annot_prior = "fixed",
+  variant_available = NULL,
+  verbose = TRUE
 )
 }
 \arguments{
-\item{R_mat_list}{A list of length N ancestry with each elment being correlation matrix with dimension p*p, the column name of the correlation matrix should match to the order of SNP name in summary_stat_list}
+\item{R_mat_list}{A named list of length \code{K}, where \code{k} indexes ancestry. Each
+element is an \verb{m x m} correlation matrix on the variant union; the column name
+of the correlation matrix should match to the order of SNP name in
+summary_stat_list}
 
-\item{summary_stat_list}{A list of length N ancestry with each elment being summary statistics. The minimum requirement of summary statistics contains columns of SNP, Beta, Se, Z, and N. The order of the SNP should match the order of the correlation matrix}
+\item{summary_stat_list}{A named list of length \code{K}, with each element
+being summary statistics on the UNION of variants. The minimum requirement of
+summary statistics contains columns of SNP, Beta, Se, Z, and N. The order of the
+SNP should match the order of the correlation matrix. The list NAMES carry
+ancestry identity and must match R_mat_list.}
 
 \item{L}{Number of effects supposed within the region}
+
+\item{residual_variance}{Optional residual variances.}
+
+\item{prior_weights}{Optional SNP prior weights.}
+
+\item{ancestry_weight}{Optional weights over nonempty ancestry configurations.}
+
+\item{optim_method}{Prior-variance optimizer.}
+
+\item{estimate_residual_variance}{Whether to estimate residual variance.}
+
+\item{max_iter}{Maximum number of iterations.}
+
+\item{cor_method}{Credible-set purity criterion.}
+
+\item{cor_threshold}{Minimum credible-set purity.}
+
+\item{annot}{Optional SNP-by-feature annotation matrix.}
+
+\item{annot_method}{Annotation-prior estimation method.}
+
+\item{est_annot_prior}{Annotation-prior update mode.}
+
+\item{variant_available}{\code{NULL}, or the logical \verb{m x K} availability matrix
+\code{H}, whose entry \verb{(j,k)} is \verb{H_\{jk\}}. Column names are the ancestry names;
+\code{TRUE} means variant \code{j} is observed in ancestry \code{k}. \code{NULL} means every
+variant is available in every ancestry, which reproduces upstream INFUSE.}
+
+\item{verbose}{Whether to print progress.}
 }
 \value{
-An R6 object with pip, credible sets, and other features of the fine-mapping result.
+An R6 fit object with PIPs, credible sets, effect moments and diagnostics.
 }
 \description{
-infuse core function
+Fits the original common-variant model when \code{variant_available} is \code{NULL}, using the same availability-aware engine as union analyses.
+Supply a named availability matrix to fit the union of ancestry variant sets.
+Use \code{\link[=prepare_infuse_union]{prepare_infuse_union()}} to harmonize and align unequal variant sets first.
 }

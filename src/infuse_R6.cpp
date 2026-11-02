@@ -301,3 +301,154 @@ arma::vec optimize_llk(const arma::mat& annotation, const arma::mat& alpha, arma
   // Return the optimized parameters as arma::vec
   return as<arma::vec>(w_update);
 }
+
+// ==================================================================
+//
+//  Availability-conditioned prior-variance likelihood for INFUSE.
+//  Original upstream attribution: (C) 2022 Boran Gao, Xiang Zhou.
+//  GNU General Public License.
+//
+// Validate the 0-based software representation of J_s coming from R.
+static void validate_snp_index_avail(const arma::uvec& idx, const arma::uword N_SNP,
+                                    const std::string& what) {
+  if (idx.n_elem == 0) return;
+  if (idx.max() >= N_SNP) {
+    Rcpp::stop("%s: SNP index %u is out of bounds for %u variants.",
+               what.c_str(), (unsigned)(idx.max() + 1), (unsigned)N_SNP);
+  }
+}
+
+// [[Rcpp::export]]
+double test_run_loglik_cpp_avail(arma::vec V, const arma::mat& betahat,
+                                 const arma::mat& shat2,
+                                 const arma::mat& prior_weight, const int nancestry,
+                                 arma::uvec diag_index, Rcpp::List config_list,
+                                 Rcpp::List config_snp_index) {
+
+  const arma::uword N_SNP = shat2.n_rows;
+  const int n_config = config_list.length();
+
+  if (config_snp_index.length() != n_config) {
+    Rcpp::stop("config_snp_index has length %d but config_list has length %d.",
+               config_snp_index.length(), n_config);
+  }
+  if (prior_weight.n_rows != N_SNP || (int)prior_weight.n_cols != n_config) {
+    Rcpp::stop("prior_weight must be %u x %d; got %u x %u.",
+               (unsigned)N_SNP, n_config,
+               (unsigned)prior_weight.n_rows, (unsigned)prior_weight.n_cols);
+  }
+
+  mat Xty = betahat/shat2;
+
+  // --- prior covariance: identical construction to test_run_loglik_cpp -------
+  mat cor_mat(nancestry,nancestry);
+  uvec upper_indices = trimatu_ind(size(cor_mat));
+  cor_mat(upper_indices) = V;
+  cor_mat = symmatu(cor_mat);
+  cor_mat.diag().ones();
+
+  mat se_mat = eye(nancestry,nancestry);
+  V.elem(diag_index-1) =  sqrt(exp(V.elem(diag_index-1))) ;
+  se_mat.diag() = V.elem(diag_index-1);
+
+  arma::mat V_mat = se_mat*cor_mat*se_mat;
+
+  // log BF^H_{s,j}=-Inf everywhere; only cells with j in J_s get overwritten.
+  arma::mat lbf_mat(N_SNP, n_config);
+  lbf_mat.fill(-arma::datum::inf);
+
+  for (int n_config_i = 0; n_config_i < n_config; n_config_i++) {
+    vec config_vec = config_list[n_config_i];
+    config_vec = config_vec - 1;
+    uvec config_vec_index = conv_to< uvec >::from(config_vec);
+
+    vec snp_vec = config_snp_index[n_config_i];
+    if (snp_vec.n_elem == 0) continue;            // no feasible SNP for this config
+    snp_vec = snp_vec - 1;
+    uvec snp_idx = conv_to< uvec >::from(snp_vec);
+    validate_snp_index_avail(snp_idx, N_SNP,
+      "test_run_loglik_cpp_avail config " + std::to_string(n_config_i + 1));
+
+    arma::vec lbf_config = lbf_mat.col(n_config_i);
+
+    if (config_vec_index.n_elem == 1) {
+      const arma::uword a = config_vec_index(0);
+      arma::vec bh = betahat.col(a);
+      arma::vec sh = shat2.col(a);
+      arma::vec bh_sub = bh.elem(snp_idx);
+      arma::vec sh_sub = sh.elem(snp_idx);
+      arma::vec mu = zeros<vec>(snp_idx.n_elem);
+      double sigma_g_square = V_mat(a, a);
+
+      lbf_config.elem(snp_idx) =
+        arma::log_normpdf(bh_sub, mu, sqrt(sigma_g_square + sh_sub)) -
+        arma::log_normpdf(bh_sub, mu, sqrt(sh_sub));
+    } else {
+      arma::mat V_sub = V_mat(config_vec_index,config_vec_index);
+      arma::mat shat2_sub = shat2.cols(config_vec_index);
+      arma::mat Xty_sub = Xty.cols(config_vec_index);
+      arma::mat I_sub = eye(V_sub.n_cols,V_sub.n_cols);
+
+      double lbf_part_1,lbf_part_2;
+      mat SIGMA,V_SIGMA,post_var,SIGMA_INV;
+      rowvec Xty_var_sub;
+
+      for (arma::uword k = 0; k < snp_idx.n_elem; k++) {
+        const arma::uword j = snp_idx(k);
+        SIGMA_INV = diagmat(shat2_sub.row(j));
+        SIGMA = inv(SIGMA_INV);
+        V_SIGMA = V_sub*SIGMA;
+        post_var = SIGMA_INV-inv(SIGMA+SIGMA*V_SIGMA);
+        Xty_var_sub = Xty_sub.row(j)*post_var;
+        lbf_part_1 = 0.5*dot(Xty_var_sub.t(), Xty_sub.row(j));
+        lbf_part_2 = 0.5*log(det(V_SIGMA+I_sub));
+        lbf_config(j) = lbf_part_1 - lbf_part_2;
+      }
+    }
+
+    lbf_mat.col(n_config_i) = lbf_config;
+  }
+
+  // Active support requires positive joint prior pi_{lj} phi^H_{s,j}; this is
+  // M_{js}=1 together with a positive SNP-level prior pi_{lj}.
+  arma::uvec feas = find(prior_weight > 0.0);
+  if (feas.n_elem == 0) {
+    Rcpp::stop("test_run_loglik_cpp_avail: no feasible cell has positive prior weight.");
+  }
+
+  arma::vec lbf_feas = lbf_mat.elem(feas);
+
+  // Two very different reasons a feasible cell can be non-finite; they must not be
+  // conflated.
+  //
+  // (a) NaN or +Inf: the cell WAS evaluated, but the multivariate branch produced
+  //     garbage for this trial parameter value.  That happens legitimately for
+  //     K >= 3, where the optimiser explores correlation matrices that are not
+  //     positive definite (e.g. every off-diagonal near -1 gives eigenvalue
+  //     1 + (K-1)r < 0), so det(V*SIGMA + I) can be negative and its log is NaN.
+  //     The right response is to reject the parameter value, exactly as for a
+  //     non-positive total weight below -- not to abort the fit.
+  if (lbf_feas.has_nan()) return arma::datum::inf;
+  if (arma::any(lbf_feas == arma::datum::inf)) return arma::datum::inf;
+
+  // (b) -Inf: the cell was NEVER evaluated, i.e. it carries positive joint prior
+  //     pi_{lj} phi^H_{s,j} but j is absent from J_s. That is a genuine index/prior
+  //     inconsistency and must be loud.
+  if (arma::any(lbf_feas == -arma::datum::inf)) {
+    Rcpp::stop("test_run_loglik_cpp_avail: a feasible cell was never evaluated -- "
+               "config_snp_index and prior_weight disagree about feasibility.");
+  }
+
+  double maxlbf = lbf_feas.max();
+
+  arma::mat w_multi(N_SNP, n_config, arma::fill::zeros);
+  w_multi.elem(feas) = arma::exp(lbf_feas - maxlbf) % prior_weight.elem(feas);
+
+  double weighted_sum_w = accu(w_multi);
+  if (!std::isfinite(weighted_sum_w) || weighted_sum_w <= 0.0) {
+    return arma::datum::inf;   // reject this parameter value, never propagate NaN
+  }
+
+  double lbf_model = maxlbf + log(weighted_sum_w);
+  return(-1.0*lbf_model);
+}

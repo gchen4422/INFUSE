@@ -1,0 +1,7 @@
+^\..*$
+^analysis$
+^build\.R$
+^run_tests\.R$
+^.*\.ipynb_checkpoints$
+^.*\.(o|so|dll)$
+^tests$
